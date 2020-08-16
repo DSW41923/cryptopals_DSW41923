@@ -4,7 +4,7 @@ import getopt
 import binascii
 import base64
 
-from Common import bytestrxor, evaluate_palintext
+from common_utils import bytestrxor, evaluate_palintext
 
 
 def Hamming_distance(string_1, string_2):
@@ -30,17 +30,17 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('1-6.py <ciphertext_fileinput>')
+        print('06.py <ciphertext_fileinput>')
         sys.exit(2)
 
     if len(args) != 1:
         print('In correct number of arguements')
-        print('1-6.py <ciphertext_fileinput>')
+        print('06.py <ciphertext_fileinput>')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('1-6.py <ciphertext_fileinput>')
+            print('06.py <ciphertext_fileinput>')
             sys.exit()
 
     try:

@@ -4,7 +4,7 @@ import getopt
 import binascii
 import string
 
-from Common import bytestrxor
+from common_utils import bytestrxor
 
 
 def evaluate_palintext(plaintext):
@@ -28,7 +28,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('1-3.py <ciphertext_input>')
+        print('03.py <ciphertext_input>')
         sys.exit(2)
 
     if len(args) > 1:
@@ -40,7 +40,7 @@ def main(argv):
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('1-3.py <ciphertext_input>')
+            print('03.py <ciphertext_input>')
             sys.exit()
 
     try:

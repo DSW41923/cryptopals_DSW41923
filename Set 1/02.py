@@ -13,7 +13,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('1-2.py <first_hex_string_input> <second_hex_string_input> <expected_base64_output>')
+        print('02.py <first_hex_string_input> <second_hex_string_input> <expected_base64_output>')
         sys.exit(2)
     if len(args) > 3:
         print('Too many arguements')
@@ -24,7 +24,7 @@ def main(argv):
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('1-2.py <first_hex_string_input> <second_hex_string_input> <expected_base64_output>')
+            print('02.py <first_hex_string_input> <second_hex_string_input> <expected_base64_output>')
             sys.exit()
 
     try:

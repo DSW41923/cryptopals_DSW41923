@@ -12,17 +12,17 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('1-7.py <ciphertext_fileinput> <key>')
+        print('07.py <ciphertext_fileinput> <key>')
         sys.exit(2)
 
     if len(args) != 2:
         print('Invalid number of arguements')
-        print('1-7.py <ciphertext_fileinput> <key>')
+        print('07.py <ciphertext_fileinput> <key>')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('1-7.py <ciphertext_fileinput> <key>')
+            print('07.py <ciphertext_fileinput> <key>')
             sys.exit()
 
     try:
