@@ -6,7 +6,7 @@ import base64
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 
-from Common import split_by_length
+from common_utils import split_by_length
 
 
 def main(argv):
@@ -14,17 +14,17 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('1-8.py <ciphertext_fileinput>')
+        print('08.py <ciphertext_fileinput>')
         sys.exit(2)
 
     if len(args) != 1:
         print('Invalid number of arguements')
-        print('1-8.py <ciphertext_fileinput>')
+        print('08.py <ciphertext_fileinput>')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('1-8.py <ciphertext_fileinput>')
+            print('08.py <ciphertext_fileinput>')
             sys.exit()
 
     try:

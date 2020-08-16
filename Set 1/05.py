@@ -4,7 +4,7 @@ import getopt
 import binascii
 import string
 
-from Common import bytestrxor
+from common_utils import bytestrxor
 
 
 def generate_key(text, desired_length):
@@ -18,7 +18,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('1-5.py <plaintext_input> <key_input> <expected_ciphertext>')
+        print('05.py <plaintext_input> <key_input> <expected_ciphertext>')
         sys.exit(2)
 
     if len(args) > 3:
@@ -30,7 +30,7 @@ def main(argv):
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('1-5.py <plaintext_input> <key_input> <expected_ciphertext>')
+            print('05.py <plaintext_input> <key_input> <expected_ciphertext>')
             sys.exit()
 
     try:
