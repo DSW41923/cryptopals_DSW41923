@@ -54,12 +54,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('11.py')
+        print('Usage: python3 challenge_11.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('11.py')
+            print('Usage: python3 challenge_11.py')
+            print('Challenge 11: An ECB/CBC detection oracle')
             sys.exit()
 
     trial_num = 100

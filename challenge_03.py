@@ -30,12 +30,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('03.py')
+        print('Usage: python3 challenge_03.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('03.py')
+            print('Usage: python3 challenge_03.py')
+            print('Challenge 03: Single-byte XOR cipher')
             sys.exit()
 
     try:

@@ -9,12 +9,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('01.py')
+        print('Usage: python3 challenge_01.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('01.py')
+            print('Usage: python3 challenge_01.py')
+            print('Challenge 01: Convert hex to base64')
             sys.exit()
 
     origin_text = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"

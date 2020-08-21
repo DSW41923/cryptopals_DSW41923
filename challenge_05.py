@@ -18,12 +18,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('05.py')
+        print('Usage: python3 challenge_05.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('05.py')
+            print('Usage: python3 challenge_05.py')
+            print('Challenge 05: Implement repeating-key XOR')
             sys.exit()
 
     try:

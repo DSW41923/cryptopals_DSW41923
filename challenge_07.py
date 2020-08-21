@@ -13,12 +13,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('07.py')
+        print('Usage: python3 challenge_07.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('07.py')
+            print('Usage: python3 challenge_07.py')
+            print('Challenge 07: AES in ECB mode')
             sys.exit()
 
     try:

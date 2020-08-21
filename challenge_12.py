@@ -55,12 +55,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('12.py')
+        print('Usage: python3 challenge_12.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('12.py')
+            print('Usage: python3 challenge_12.py')
+            print('Challenge 12: Byte-at-a-time ECB decryption (Simple)')
             sys.exit()
 
     target = ("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"

@@ -18,12 +18,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('08.py')
+        print('Usage: python3 challenge_08.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('08.py')
+            print('Usage: python3 challenge_08.py')
+            print('Challenge 08: Detect AES in ECB mode')
             sys.exit()
 
     try:
