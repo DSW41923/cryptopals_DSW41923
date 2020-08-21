@@ -31,12 +31,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('06.py')
+        print('Usage: python3 challenge_06.py [-h | --help]')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('06.py')
+            print('Usage: python3 challenge_06.py [-h | --help]')
+            print('Challenge 06: Break repeating-key XOR')
             sys.exit()
 
     try:
