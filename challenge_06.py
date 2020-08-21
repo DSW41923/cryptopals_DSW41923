@@ -4,10 +4,11 @@ import getopt
 import binascii
 import base64
 
-from common_utils import bytestrxor, evaluate_palintext
+from challenge_02 import bytestrxor
+from challenge_03 import evaluate_palintext
 
 
-def Hamming_distance(string_1, string_2):
+def hamming_distance(string_1, string_2):
     if type(string_1) == bytes:
         byte_str_1 = string_1
     else:
@@ -30,22 +31,17 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('06.py <ciphertext_fileinput>')
-        sys.exit(2)
-
-    if len(args) != 1:
-        print('In correct number of arguements')
-        print('06.py <ciphertext_fileinput>')
+        print('06.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('06.py <ciphertext_fileinput>')
+            print('06.py')
             sys.exit()
 
     try:
         original_ciphertext = ''
-        for line in open(args[0], 'r'):
+        for line in open('input_06.txt', 'r'):
             original_ciphertext += line
     except FileNotFoundError as e:
         print(repr(e))
@@ -59,7 +55,7 @@ def main(argv):
             sys.exit(2)
         else:
             # Testing Hamming distance function
-            print(Hamming_distance("this is a test", "wokka wokka!!!"))
+            print(hamming_distance("this is a test", "wokka wokka!!!"))
 
             # defining key size
             trial_blocks = 4
@@ -72,7 +68,7 @@ def main(argv):
                 while trial_times < trial_blocks:
                     first_block = ciphertext[trial_start:trial_start + trial_length]
                     second_block = ciphertext[trial_start + trial_length:trial_start + 2 * trial_length]
-                    distance += Hamming_distance(first_block, second_block)
+                    distance += hamming_distance(first_block, second_block)
                     trial_times += 1
                     trial_start = trial_start + trial_length
 
