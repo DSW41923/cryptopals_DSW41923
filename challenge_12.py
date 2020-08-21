@@ -4,9 +4,12 @@ import binascii
 import base64
 import secrets
 
-from common_utils import padding_to_length, split_by_length, bytestrxor, CBC_Encryptor
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
+
+from challenge_02 import bytestrxor
+from challenge_08 import split_by_length
+from challenge_09 import padding_to_length
 
 
 KEY = secrets.token_bytes(16)
@@ -14,8 +17,7 @@ KEY = secrets.token_bytes(16)
 
 def ECB_encryption_oracle(string):
     # Remove random prefix and affix based on challenge 14
-    # prefix_length = secrets.choice(range(5, 11))
-    # affix_length = secrets.choice(range(5, 11))
+
     plaintext = string
     plaintext_blocks = split_by_length(plaintext, 16)
     if len(plaintext_blocks[-1]) < 16:

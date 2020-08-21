@@ -4,16 +4,14 @@ import binascii
 import base64
 import secrets
 
-from common_utils import padding_to_length, split_by_length, bytestrxor, CBC_Encryptor
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 
+from challenge_02 import bytestrxor
+from challenge_08 import split_by_length
+from challenge_09 import padding_to_length
+from challenge_10 import CBC_Encryptor
 
-def ECB_ecrypt(block_length):
-    backend = default_backend()
-    cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
-    decryptor = cipher.decryptor()
-    plaintext = decryptor.update(ciphertext) + decryptor.finalize()
 
 def encryption_oracle(string):
     prefix_length = secrets.choice(range(5, 11))
@@ -38,7 +36,7 @@ def encryption_oracle(string):
 
     return mode, ciphertext
 
-def mode_detector(ciphertext):
+def detect_mode_of_operation(ciphertext):
     ciphertext_block = split_by_length(ciphertext, 16)
     for block in ciphertext_block:
         if (ciphertext_block.count(block) > 1):
@@ -54,28 +52,15 @@ def mode_detector(ciphertext):
 def main(argv):
 
     try:
-        opts, args = getopt.getopt(argv,"h:",["help", "oracle"])
+        opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('11.py --oracle <plaintext>')
+        print('11.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('11.py --oracle <plaintext>')
+            print('11.py')
             sys.exit()
-        if opt == "--oracle":
-            try:
-                plaintext = args[0].encode()
-            except binascii.Error as e:
-                print("Decoding Error: " + str(e))
-                sys.exit(2)
-            except IndexError as e:
-                print('11.py -m <plaintext>')
-                sys.exit(2)
-            else:
-                mode, ciphertext = encryption_oracle(plaintext)
-                print(ciphertext)
-                sys.exit()
 
     trial_num = 100
     success_detection = 0
@@ -83,12 +68,9 @@ def main(argv):
         testing_length = 128
         testing_inputs = secrets.token_bytes(1) * testing_length
         mode, ciphertext = encryption_oracle(testing_inputs)
-        detected_mode = mode_detector(ciphertext)
+        detected_mode = detect_mode_of_operation(ciphertext)
         if detected_mode == mode:
-            # print("Correct Detection!")
             success_detection += 1
-        # else:
-            # print("Wrong Detection!")
     print("Detection suceess rate = " + str(success_detection / float(trial_num)) )
 
 

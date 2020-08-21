@@ -13,24 +13,18 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('02.py <first_hex_string_input> <second_hex_string_input> <expected_base64_output>')
-        sys.exit(2)
-    if len(args) > 3:
-        print('Too many arguements')
-        sys.exit(2)
-    elif len(args) < 3:
-        print('Too few arguements')
+        print('02.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('02.py <first_hex_string_input> <second_hex_string_input> <expected_base64_output>')
+            print('02.py')
             sys.exit()
 
     try:
-        origin_text_1 = codecs.decode(args[0], 'hex')
-        origin_text_2 = codecs.decode(args[1], 'hex')
-        expected_text = args[2]
+        origin_text_1 = codecs.decode("1c0111001f010100061a024b53535009181c", 'hex')
+        origin_text_2 = codecs.decode("686974207468652062756c6c277320657965", 'hex')
+        expected_text = "746865206b696420646f6e277420706c6179"
     except binascii.Error as e:
         print("Decoding Error: " + str(e))
         sys.exit(2)
@@ -43,7 +37,7 @@ def main(argv):
         xor_result_str = bytestrxor(origin_text_1, origin_text_2)
         xor_result = codecs.encode(xor_result_str, encoding='hex').decode()
         print("Xored result is: " + xor_result)
-        print("Is converted result identical to the expected? " + str(xor_result == expected_text))
+        print("Is the result as expected? " + str(xor_result == expected_text))
 
 if __name__ == "__main__":
     main(sys.argv[1:])

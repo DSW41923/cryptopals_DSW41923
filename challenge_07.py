@@ -3,6 +3,7 @@ import codecs
 import getopt
 import binascii
 import base64
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 
@@ -12,22 +13,17 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('07.py <ciphertext_fileinput> <key>')
-        sys.exit(2)
-
-    if len(args) != 2:
-        print('Invalid number of arguements')
-        print('07.py <ciphertext_fileinput> <key>')
+        print('07.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('07.py <ciphertext_fileinput> <key>')
+            print('07.py')
             sys.exit()
 
     try:
         original_ciphertext = ''
-        for line in open(args[0], 'r'):
+        for line in open('input_07.txt', 'r'):
             original_ciphertext += line
     except FileNotFoundError as e:
         print(repr(e))
@@ -36,8 +32,7 @@ def main(argv):
 
         try:
             ciphertext = base64.b64decode(original_ciphertext.encode())
-            # Key = "YELLOW SUBMARIN"
-            key = args[1].encode()
+            key = b"YELLOW SUBMARINE"
         except binascii.Error as e:
             print("Decoding Error: " + str(e))
             sys.exit(2)

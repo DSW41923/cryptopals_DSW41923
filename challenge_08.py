@@ -3,10 +3,14 @@ import codecs
 import getopt
 import binascii
 import base64
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 
-from common_utils import split_by_length
+
+def split_by_length(text, length):
+
+    return [text[i:i + length] for i in range(0, len(text), length)]
 
 
 def main(argv):
@@ -14,22 +18,17 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('08.py <ciphertext_fileinput>')
-        sys.exit(2)
-
-    if len(args) != 1:
-        print('Invalid number of arguements')
-        print('08.py <ciphertext_fileinput>')
+        print('08.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('08.py <ciphertext_fileinput>')
+            print('08.py')
             sys.exit()
 
     try:
         ECB_lines = []
-        for line_num, line in enumerate(open(args[0], 'r')):
+        for line_num, line in enumerate(open('input_08.txt', 'r')):
             try:
                 line = line.replace("\n", "")
                 ciphertext = codecs.decode(line, 'hex')

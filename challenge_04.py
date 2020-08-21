@@ -4,51 +4,25 @@ import getopt
 import binascii
 import string
 
-from common_utils import bytestrxor
+from challenge_02 import bytestrxor
+from challenge_03 import evaluate_palintext
 
-
-def evaluate_palintext(plaintext):
-    point = 0
-    for byte in plaintext:
-        # import pdb; pdb.set_trace()
-        if byte >= 128:
-            return -1
-
-        char = byte.to_bytes(1, 'big').decode()
-
-        if char in string.printable:
-            point += 1
-
-        if char in string.ascii_letters:
-            point += 1
-
-        if char == ' ':
-            point += 1
-
-    return point
 
 def main(argv):
 
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('04.py <ciphertext_fileinput>')
-        sys.exit(2)
-
-    if len(args) > 1:
-        print('Too many arguements')
-        sys.exit(2)
-    elif len(args) < 1:
-        print('Too few arguements')
+        print('04.py')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('04.py <ciphertext_fileinput>')
+            print('04.py')
             sys.exit()
 
     try:
-        file_input = open(args[0], 'r')
+        file_input = open('input_04.txt', 'r')
         ciphertexts = file_input.read().split("\n")
     except FileNotFoundError as e:
         print(repr(e))
