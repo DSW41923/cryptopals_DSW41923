@@ -9,12 +9,12 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('Usage: python3 challenge_01.py')
+        print('Usage: python3 challenge_01.py [-h | --help]')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('Usage: python3 challenge_01.py')
+            print('Usage: python3 challenge_01.py [-h | --help]')
             print('Challenge 01: Convert hex to base64')
             sys.exit()
 
