@@ -17,7 +17,7 @@ KEY = secrets.token_bytes(16)
 
 def ECB_encryption_oracle(string):
     # Remove random prefix and affix based on challenge 14
-
+    prefix_length = secrets.choice(range(5, 11))
     plaintext = string
     plaintext_blocks = split_by_length(plaintext, 16)
     if len(plaintext_blocks[-1]) < 16:
@@ -55,13 +55,13 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"h:",["help"])
     except getopt.GetoptError:
-        print('Usage: python3 challenge_12.py [-h | --help]')
+        print('Usage: python3 challenge_14.py [-h | --help]')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt in ('-h', "--help"):
-            print('Usage: python3 challenge_12.py [-h | --help]')
-            print('Challenge 12: Byte-at-a-time ECB decryption (Simple)')
+            print('Usage: python3 challenge_14.py [-h | --help]')
+            print('Challenge 14: Byte-at-a-time ECB decryption (Harder)')
             sys.exit()
 
     target = ("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"
@@ -78,17 +78,22 @@ def main(argv):
 
     # Generate dictionary for all possible ciphertext
     dictionary = {}
-    for x in range(256):
-        dictionary_pt = b'A' * (block_length - 1) + bytes([x])
-        dictionary_ct = ECB_encryption_oracle(dictionary_pt)
-        dictionary[dictionary_ct] = x
+    for x in range(block_length - 1):
+        for y in range(256):
+            dictionary_pt = b'A' * x + bytes([y])
+            dictionary_ct = ECB_encryption_oracle(dictionary_pt)
+            dictionary[dictionary_ct] = y
 
     result = []
     if mode_of_operation == "ECB":
         for byte in target_bytes:
-            trial_plaintext = b'A' * (block_length - 1) + bytes([byte])
+            trial_plaintext = b'A' * block_length + bytes([byte])
             trial_ciphertext = ECB_encryption_oracle(trial_plaintext)
-            result.append(dictionary[trial_ciphertext])
+            trial_ciphertext_blocks = split_by_length(trial_ciphertext, block_length)
+            try:
+                result.append(dictionary[trial_ciphertext_blocks[-1]])
+            except Exception as e:
+                import pdb; pdb.set_trace()
 
     target_result = bytes(result).decode()
     print("Target is :\n" + target_result)
