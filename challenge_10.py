@@ -30,7 +30,7 @@ def CBC_Encryptor(key, plaintext, iv):
             pt = bytestrxor(block, ciphertext_result[block_num - 1])
         ciphertext = encryptor.update(pt)
         ciphertext_result.append(ciphertext)
-    return b''.join(ciphertext_result)
+    return iv + b''.join(ciphertext_result)
 
 def CBC_Decryptor(key, ciphertext):
     # Prepare decryptor
