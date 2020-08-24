@@ -5,6 +5,8 @@ import binascii
 
 def padding_to_length(text, length):
     pad_length = length - len(text)
+    if pad_length == 0:
+        pad_length = length
     if type(text) != bytes:
         text = text.encode()
     return text + bytes([pad_length] * pad_length)
