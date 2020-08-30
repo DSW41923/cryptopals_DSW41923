@@ -91,7 +91,6 @@ def main(argv):
             print(seed, new_seed)
             print(outputs[x], new_number)
             print(x)
-            import pdb; pdb.set_trace()
             print("Incorrect implementaion!")
             sys.exit(2)
     print("Correct implementaion! Good Job!")
