@@ -123,5 +123,6 @@ def main(argv):
             print("Decrypted result is: \n" + possible_pt['plaintext'].decode())
             print("Key (in hex) is: " + codecs.encode(possible_pt['key'], encoding='hex').decode())
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])

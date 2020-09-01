@@ -44,5 +44,6 @@ def main(argv):
             plaintext = decryptor.update(ciphertext) + decryptor.finalize()
             print("Decrypted result is: \n" + plaintext.decode())
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])

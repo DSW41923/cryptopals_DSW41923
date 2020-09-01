@@ -29,5 +29,6 @@ def main(argv):
         print("Converted result is: " + convert_result)
         print("Is converted result as expected? " + str(convert_result == expected_text))
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])

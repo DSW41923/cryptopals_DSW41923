@@ -12,7 +12,7 @@ from challenge_08 import split_by_length
 
 def CTR_cryptor(text, key, nonce):
 
-     # Prepare encryptor
+    # Prepare encryptor
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
     encryptor = cipher.encryptor()

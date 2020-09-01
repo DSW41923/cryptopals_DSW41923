@@ -40,5 +40,6 @@ def main(argv):
         print("Xored result is: " + xor_result)
         print("Is the result as expected? " + str(xor_result == expected_text))
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])

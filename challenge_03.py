@@ -61,5 +61,6 @@ def main(argv):
             print("Possible plaintext could be: " + plaintext.decode())
             print("Possible key (in hex) could be: " + codecs.encode(key, 'hex').decode())
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])

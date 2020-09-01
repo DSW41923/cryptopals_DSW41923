@@ -42,5 +42,6 @@ def main(argv):
         print("Encrypted result is: " + ciphertext)
         print("Is the result as expected? " + str(ciphertext == expected_ciphertext))
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])

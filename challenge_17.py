@@ -9,7 +9,9 @@ from challenge_08 import split_by_length
 from challenge_10 import CBC_Encryptor, CBC_Decryptor
 from challenge_15 import verify_padding
 
+
 CBC_KEY = secrets.token_bytes(16)
+
 
 def encrypt_in_CBC(plaintext):
     iv = secrets.token_bytes(16)

@@ -65,6 +65,7 @@ def pad_plaintext(plaintext, block_length):
         plaintext_blocks[-1] = padding_to_length(plaintext_blocks[-1], block_length)
     return b''.join(plaintext_blocks)
 
+
 def main(argv):
 
     try:
