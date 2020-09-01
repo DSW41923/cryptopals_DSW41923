@@ -60,7 +60,7 @@ def main(argv):
             print('Challenge 23: Clone an MT19937 RNG from its output')
             sys.exit()
 
-    seed = secrets.choice(range(2 ** 32 - 1))
+    seed = secrets.choice(range(2 ** 32))
     target_rng = MT19937_RNG(seed)
     results = []
     for x in range(624):
