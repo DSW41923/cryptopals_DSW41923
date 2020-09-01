@@ -11,19 +11,15 @@ def verify_padding(text, length):
         text = text.encode()
     
     if len(text) == length:
-        if chr(text[-1]) in string.printable:
-            # No Padding
-            return text
-        else:
-            padding_byte = text[-1]
-            padding_byte_count = 1
-            for x in range(2, padding_byte + 1):
-                    if text[-x] == padding_byte:
-                        padding_byte_count += 1
-                    else:
-                        break
-            if padding_byte_count == padding_byte:
-                return text[:-padding_byte_count]
+        padding_byte = text[-1]
+        padding_byte_count = 1
+        for x in range(2, padding_byte + 1):
+                if text[-x] == padding_byte:
+                    padding_byte_count += 1
+                else:
+                    break
+        if padding_byte_count == padding_byte:
+            return text[:-padding_byte_count]
 
     raise ValueError("Invalid Padding!")
 
