@@ -31,7 +31,7 @@ class SHA1_prefix_MAC(object):
 
         ml = len(text) * 8
 
-        # Preprocessing the input by the manipulating a string with only 0s and 1a
+        # Preprocessing the input by the manipulating the binary string of text
         text_bin_string = bin(int.from_bytes(text, 'big'))[2:]
 
         # bin(int.from_bytes()) truncates preceding zeroes, fixed as below, but better use struct.unpack next time
