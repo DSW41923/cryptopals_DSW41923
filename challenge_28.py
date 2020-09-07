@@ -23,9 +23,9 @@ class SHA1_prefix_MAC(object):
     def __init__(self, key):
         super(SHA1_prefix_MAC, self).__init__()
         self.key = key
-        self.set_chunk()
 
-    def SHA1_hash(self, text):
+    def preprocess(self, text):
+
         if type(text) != bytes:
             text = text.encode()
 
@@ -44,8 +44,12 @@ class SHA1_prefix_MAC(object):
         # Set the last 64 bit as the original text length ml
         text_bin_string = text_bin_string[:-64] + bin(ml)[2:].zfill(64)
 
-        text_bin_string_chunks = split_by_length(text_bin_string, 512)
-        for chunk in text_bin_string_chunks:
+        return text_bin_string
+
+    def calculate_hashing(self, bin_string):
+
+        bin_string_chunks = split_by_length(bin_string, 512)
+        for chunk in bin_string_chunks:
             words = list(map(lambda x: int(x, 2), split_by_length(chunk, 32)))
             for i in range(16, 80):
                 t = words[i - 3] ^ words[i - 8] ^ words[i - 14] ^ words[i - 16]
@@ -88,16 +92,19 @@ class SHA1_prefix_MAC(object):
         hash_value = list(map(lambda x: x.to_bytes(4, 'big'), [self.h0, self.h1, self.h2, self.h3, self.h4]))
         return b''.join(hash_value)
 
-    def set_chunk(self, a=0x67452301, b=0xEFCDAB89, c=0x98BADCFE, d=0x10325476, e=0xC3D2E1F0):
+    def set_chunk(self, a, b, c, d, e):
+
         self.h0, self.h1, self.h2, self.h3, self.h4 = a, b, c, d, e
 
     def MAC_text(self, text):
-        if type(text) != bytes:
-            text = text.encode()
-        return self.SHA1_hash(self.key + text)
+        text = self.key + text
+        self.set_chunk(0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0)
+        text_bin_string = self.preprocess(text)
+        return self.calculate_hashing(text_bin_string)
 
     def verify(self, text, hash_value):
-        return (self.SHA1_hash(self.key + text) == hash_value)
+
+        return (self.MAC_text(text) == hash_value)
 
 def prefix_SHA1_MAC(key, text):
 
