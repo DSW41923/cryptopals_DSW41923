@@ -1,11 +1,9 @@
 import sys
 import getopt
-import binascii
-import base64
 import secrets
 import time
 
-from challenge_21 import MT19937_RNG
+from challenge_21 import MT19937RNG
 
 
 def main(argv):
@@ -24,14 +22,14 @@ def main(argv):
 
     time.sleep(secrets.choice(range(40, 1000)))
     seed = int(time.time())
-    target_rng = MT19937_RNG(seed)
+    target_rng = MT19937RNG(seed)
     time.sleep(secrets.choice(range(40, 1000)))
     number = target_rng.extract_number()
 
     cracking_time = int(time.time())
     for x in range(2000):
         cracking_seed = cracking_time - x
-        trial_rng = MT19937_RNG(cracking_seed)
+        trial_rng = MT19937RNG(cracking_seed)
         trial_number = trial_rng.extract_number()
         if trial_number == number:
             print("Cracking Successfully!")

@@ -1,31 +1,31 @@
 import sys
 import getopt
-import binascii
 import secrets
 import base64
 
 from challenge_02 import bytestrxor
 from challenge_08 import split_by_length
-from challenge_10 import CBC_Encryptor, CBC_Decryptor
+from challenge_10 import cbc_encryptor, cbc_decryptor
 from challenge_15 import verify_padding
 
 
 CBC_KEY = secrets.token_bytes(16)
 
 
-def encrypt_in_CBC(plaintext):
+def encrypt_in_cbc(plaintext):
     iv = secrets.token_bytes(16)
-    ciphertext = CBC_Encryptor(CBC_KEY, plaintext, iv)
+    ciphertext = cbc_encryptor(CBC_KEY, plaintext, iv)
     return ciphertext
 
 def decrypt_and_verify_padding(ciphertext):
-    plaintext = CBC_Decryptor(CBC_KEY, ciphertext)
+    plaintext = cbc_decryptor(CBC_KEY, ciphertext)
     try:
         return verify_padding(plaintext[-16:], 16)
     except ValueError:
         return False
 
 
+# noinspection SpellCheckingInspection
 def main(argv):
 
     try:
@@ -55,14 +55,14 @@ def main(argv):
     plaintext = base64.b64decode(secrets.choice(data))
 
     # Create ciphertext to decrypt
-    ciphertext = encrypt_in_CBC(plaintext)
+    ciphertext = encrypt_in_cbc(plaintext)
     ciphertext_blocks = split_by_length(ciphertext, 16)
     result = b''
     for iv, target in zip(ciphertext_blocks[:-1], ciphertext_blocks[1:]):
         block_result = b''
         for j in range(1, 17):
 
-            # Avoid trying the original padding when dcerypting last byte
+            # Avoid trying the original padding when decrypting last byte
             trial_start = 0
             if j == 1:
                 trial_start = 1
@@ -73,7 +73,7 @@ def main(argv):
                 if block_result:
                     forged_padding = bytestrxor(bytes([j] * (j - 1)), bytestrxor(iv[-j + 1:], block_result))
                     new_iv += forged_padding
-                if decrypt_and_verify_padding(new_iv + target) != False:
+                if bool(decrypt_and_verify_padding(new_iv + target)):
                     plaintext_byte = bytes([j ^ k])
                     block_result = plaintext_byte + block_result
                     break

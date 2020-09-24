@@ -2,10 +2,6 @@ import sys
 import codecs
 import getopt
 import binascii
-import base64
-
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
 
 
 def split_by_length(text, length):
@@ -28,7 +24,7 @@ def main(argv):
             sys.exit()
 
     try:
-        ECB_lines = []
+        ecb_lines = []
         for line_num, line in enumerate(open('input_08.txt', 'r')):
             try:
                 line = line.replace("\n", "")
@@ -39,10 +35,10 @@ def main(argv):
             else:
                 ciphertext_block = split_by_length(ciphertext, 16)
                 for block in ciphertext_block:
-                    if (ciphertext_block.count(block) > 1) and (line_num not in ECB_lines):
-                        ECB_lines.append(line_num)
+                    if (ciphertext_block.count(block) > 1) and (line_num not in ecb_lines):
+                        ecb_lines.append(line_num)
                         
-        for line_num in ECB_lines:
+        for line_num in ecb_lines:
             print(str(line_num) + " is AES in ECB mode!!")
     except FileNotFoundError as e:
         print(repr(e))

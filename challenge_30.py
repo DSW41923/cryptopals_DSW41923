@@ -1,24 +1,24 @@
 import sys
-import codecs
 import getopt
-import binascii
 import secrets
 
 from challenge_08 import split_by_length
 from challenge_28 import left_rotate
+from challenge_29 import get_desired_extended_text
 
-class MD4_prefix_MAC(object):
+class MD4PrefixMAC(object):
     """
     MD4_prefix_MAC
     Implementing MD4 for MAC, with the ability to set internal chunks
-    All intergers are in big-endian    
+    All integers are in big-endian
     """
 
     def __init__(self, key):
-        super(MD4_prefix_MAC, self).__init__()
+        super(MD4PrefixMAC, self).__init__()
         self.key = key
 
-    def preprocess(self, text):
+    @staticmethod
+    def preprocess(text):
 
         if type(text) != bytes:
             text = text.encode()
@@ -87,7 +87,7 @@ class MD4_prefix_MAC(object):
 
         self.h0, self.h1, self.h2, self.h3 = a, b, c, d
 
-    def MAC_text(self, text):
+    def mac_text(self, text):
 
         text = self.key + text
         self.set_chunk(0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476)
@@ -96,7 +96,7 @@ class MD4_prefix_MAC(object):
 
     def verify(self, text, hash_value):
 
-        return (self.MAC_text(text) == hash_value)
+        return self.mac_text(text) == hash_value
 
 
 
@@ -114,11 +114,13 @@ def main(argv):
             print('Challenge 30: Break an MD4 keyed MAC using length extension')
             sys.exit()
 
-    # Verify MD4 Implemetation
+    # Verify MD4 Implementation
+    # noinspection SpellCheckingInspection
     testing_text = [b"", b"a", b"abc", b"message digest",
         b"abcdefghijklmnopqrstuvwxyz",
         b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
         b"12345678901234567890123456789012345678901234567890123456789012345678901234567890"]
+    # noinspection SpellCheckingInspection
     verifying_hash = ["31d6cfe0d16ae931b73c59d7e0c089c0",
         "bde52cb31de33e46245e05fbdbd6fb24",
         "a448017aaf21d8525fc10ae87aa6729d",
@@ -126,9 +128,9 @@ def main(argv):
         "d79e1c308aa5bbcdeea8ed63df412da9",
         "043f8582f241db351ce627e153e7f0e4",
         "e33b4ddc9c38f2199c3e7b164fcc0536"]
-    verifying_MAC = MD4_prefix_MAC(b'')
+    verifying_mac = MD4PrefixMAC(b'')
     for text, hash_value in zip(testing_text, verifying_hash):
-        if not verifying_MAC.verify(text, bytes.fromhex(hash_value)):
+        if not verifying_mac.verify(text, bytes.fromhex(hash_value)):
             print("Implementation Fail at text: " + text.decode())
             sys.exit()
     print("Successful Implementation!")
@@ -138,26 +140,11 @@ def main(argv):
     text = b"comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"
     target = b';admin=true'
 
-    MAC_generator = MD4_prefix_MAC(key)
-    original_MAC = MAC_generator.MAC_text(text)
-    new_states = tuple(map(lambda x: int.from_bytes(int(x, 16).to_bytes(4, 'big'), 'little'), split_by_length(original_MAC.hex(), 8)))
-
-    for x in range(2 ** 64 - len(text)):
-
-        # Getting original padding
-        trial_text = b'A' * x + text
-        original_padded_text_bin = MAC_generator.preprocess(trial_text)
-        original_padded_text = int(original_padded_text_bin, 2).to_bytes(len(original_padded_text_bin) // 8, byteorder='big')
-        trial_mali_text = original_padded_text + target
-
-        # Caculating hash from new blocks with states provided
-        MAC_generator.set_chunk(*new_states)
-        padded_trial_mali_text_bin = MAC_generator.preprocess(trial_mali_text)
-        mali_MAC = MAC_generator.calculate_hashing(padded_trial_mali_text_bin[1024:])
-        if MAC_generator.verify(trial_mali_text[x:], mali_MAC):
-            print("Got It!")
-            print(b"Desired extended text is: " + trial_mali_text[x:])
-            break
+    mac_generator = MD4PrefixMAC(key)
+    original_mac = mac_generator.mac_text(text)
+    splitted_original_mac_hex = split_by_length(original_mac.hex(), 8)
+    new_states = tuple(map(lambda x: int.from_bytes(int(x, 16).to_bytes(4, 'big'), 'little'), splitted_original_mac_hex))
+    get_desired_extended_text(text, mac_generator, new_states, target)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

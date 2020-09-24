@@ -1,11 +1,8 @@
 import sys
 import getopt
-import binascii
-import base64
 import secrets
-import time
 
-from challenge_21 import MT19937_RNG
+from challenge_21 import MT19937RNG
 
 
 def recover_rng_state(source):
@@ -20,7 +17,7 @@ def recover_rng_state(source):
         # Inverse second last computation
         # x_3 = x_2 ^ ((x_2 << 15) & 0xEFC60000)
         x_2 = x_3 % (2 ** 17)
-        x_2 += ((((x_2 >> 2) & (0xEFC6 >> 1)) ^ (x_3 >> 17))) << 17
+        x_2 += ((x_2 >> 2) & (0xEFC6 >> 1) ^ x_3 >> 17) << 17
 
         # Inverse second computation
         # x_2 = x_1 ^ ((x_1 << 7) & 0x9D2C5680)
@@ -34,7 +31,7 @@ def recover_rng_state(source):
             m = (magic_num >> b) % c
             n = (x_2 >> b) % c
             x_1 += ((l & m) ^ n) << b
-        x_1 += ((((x_1 >> 21) % 16) & ((magic_num >> 28) % 16)) ^ ((x_2 >> 28)) % 16) << 28
+        x_1 += ((((x_1 >> 21) % 16) & ((magic_num >> 28) % 16)) ^ (x_2 >> 28) % 16) << 28
 
         # Inverse first computation
         # x_1 = x_0 ^ ((x_0 >> 11) & 0xFFFFFFFF)
@@ -62,14 +59,14 @@ def main(argv):
             sys.exit()
 
     seed = secrets.choice(range(2 ** 32))
-    target_rng = MT19937_RNG(seed)
+    target_rng = MT19937RNG(seed)
     results = []
     for x in range(624):
         number = target_rng.extract_number()
         results.append(number)
 
     rng_states = recover_rng_state(results)
-    cloned_rng = MT19937_RNG(0)
+    cloned_rng = MT19937RNG(0)
     cloned_rng.state = rng_states
     for x in range(624):
         number_target = target_rng.extract_number()

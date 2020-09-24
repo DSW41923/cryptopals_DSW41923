@@ -2,7 +2,6 @@ import sys
 import codecs
 import getopt
 import binascii
-import string
 
 from challenge_02 import bytestrxor
 

@@ -5,7 +5,7 @@ import binascii
 import base64
 
 from challenge_02 import bytestrxor
-from challenge_03 import evaluate_palintext
+from challenge_03 import evaluate_plaintext
 
 
 def hamming_distance(string_1, string_2):
@@ -76,7 +76,7 @@ def main(argv):
                 avg_distance = (distance / trial_times) / trial_length
                 avg_distance_per_length.append(avg_distance)
 
-            min_avg_distance = min(avg_distance_per_length)
+            # min_avg_distance = min(avg_distance_per_length)
             sorted_distance = avg_distance_per_length.copy()
             sorted_distance.sort()
             possible_plaintexts = []
@@ -95,17 +95,18 @@ def main(argv):
                     best_scoring = 0
                     best_evaluation = ('', '')
                     for x in range(1, 256):
-                        possible_key = x.to_bytes(1, 'big') * len(partial_ciphertext)
+                        possible_key_byte = x.to_bytes(1, 'big')
+                        possible_key = possible_key_byte * len(partial_ciphertext)
                         possible_plaintext = bytestrxor(partial_ciphertext, possible_key)
-                        current_scoring = evaluate_palintext(possible_plaintext)
+                        current_scoring = evaluate_plaintext(possible_plaintext)
                         if current_scoring > best_scoring:
                             best_scoring = current_scoring
-                            best_evaluation = (possible_key, possible_plaintext)
+                            best_evaluation = (possible_key_byte, possible_plaintext)
                     if best_evaluation[0] != '':
                         best_evaluations.append(best_evaluation)
 
                 if len(best_evaluations) == key_length:
-                    possible_key_bytes = bytes([b[0][0] for b in best_evaluations])
+                    possible_key_bytes = b''.join([b[0] for b in best_evaluations])
                     displaced_plaintext = [p[1] for p in best_evaluations]
                     plaintext_bytes = [0] * len(ciphertext)
                     for x, pt in enumerate(displaced_plaintext):
@@ -116,12 +117,12 @@ def main(argv):
             best_pt_scoring = 0
             best_pt = {}
             for possible_pt in possible_plaintexts:
-                current_scoring = evaluate_palintext(possible_pt['plaintext'])
-                if current_scoring > best_pt_scoring:
+                current_scoring = evaluate_plaintext(possible_pt['plaintext'])
+                if current_scoring >= best_pt_scoring:
                     best_pt_scoring = current_scoring
                     best_pt = possible_pt
-            print("Decrypted result is: \n" + possible_pt['plaintext'].decode())
-            print("Key (in hex) is: " + codecs.encode(possible_pt['key'], encoding='hex').decode())
+            print("Decrypted result is: \n" + best_pt['plaintext'].decode())
+            print("Key (in hex) is: " + codecs.encode(best_pt['key'], encoding='hex').decode())
 
 
 if __name__ == "__main__":

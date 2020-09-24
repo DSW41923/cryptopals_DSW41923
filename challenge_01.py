@@ -4,6 +4,7 @@ import getopt
 import binascii
 
 
+# noinspection SpellCheckingInspection
 def main(argv):
 
     try:

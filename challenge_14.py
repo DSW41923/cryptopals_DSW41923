@@ -1,53 +1,25 @@
 import sys
 import getopt
-import binascii
 import base64
 import secrets
 
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-
-from challenge_02 import bytestrxor
 from challenge_08 import split_by_length
-from challenge_09 import padding_to_length
+from challenge_11 import ecb_encryptor
+from challenge_12 import detect_mode_of_operation, detect_block_length
+
 
 
 KEY = secrets.token_bytes(16)
 
 
-def ECB_encryption_oracle(string):
-    # Remove random prefix and affix based on challenge 14
+def prefix_ecb_encryption_oracle(plaintext):
+
     prefix_length = secrets.choice(range(5, 11))
-    plaintext = string
-    plaintext_blocks = split_by_length(plaintext, 16)
-    if len(plaintext_blocks[-1]) < 16:
-        plaintext_blocks[-1] = padding_to_length(plaintext_blocks[-1], 16)
-    plaintext = b''.join(plaintext_blocks)
-    backend = default_backend()
-    cipher = Cipher(algorithms.AES(KEY), modes.ECB(), backend=backend)
-    encryptor = cipher.encryptor()
-    ciphertext = encryptor.update(plaintext) + encryptor.finalize()
+    prefix = secrets.token_bytes(prefix_length)
+    plaintext = prefix + plaintext
+    ciphertext = ecb_encryptor(plaintext, KEY)
 
     return ciphertext
-
-def detect_mode_of_operation(ciphertext):
-    ciphertext_block = split_by_length(ciphertext, 16)
-    for block in ciphertext_block:
-        if (ciphertext_block.count(block) > 1):
-            return "ECB"
-    return "Unknown"
-
-def detect_block_length(oracle):
-    previous_ct_length = 0
-    for length in range(1, 50):
-        plaintext = b'A' * length
-        cipertext = oracle(plaintext)
-        if len(cipertext) != previous_ct_length:
-            if previous_ct_length == 0:
-                previous_ct_length = len(cipertext)
-            else:
-                return len(cipertext) - previous_ct_length
-    return previous_ct_length
 
 
 def main(argv):
@@ -64,6 +36,7 @@ def main(argv):
             print('Challenge 14: Byte-at-a-time ECB decryption (Harder)')
             sys.exit()
 
+    # noinspection SpellCheckingInspection
     target = ("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"
             "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
             "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
@@ -71,29 +44,27 @@ def main(argv):
     target_bytes = base64.b64decode(target.encode())
 
     # Detecting length of block and mode of operation
-    block_length = detect_block_length(ECB_encryption_oracle)
+    block_length = detect_block_length(prefix_ecb_encryption_oracle)
     testing_inputs = secrets.token_bytes(1) * 128
-    ciphertext = ECB_encryption_oracle(testing_inputs)
+    ciphertext = prefix_ecb_encryption_oracle(testing_inputs)
     mode_of_operation = detect_mode_of_operation(ciphertext)
 
     # Generate dictionary for all possible ciphertext
     dictionary = {}
-    for x in range(block_length - 1):
-        for y in range(256):
-            dictionary_pt = b'A' * x + bytes([y])
-            dictionary_ct = ECB_encryption_oracle(dictionary_pt)
-            dictionary[dictionary_ct] = y
+    for x in range(256):
+        for y in range(50):
+            dictionary_pt = b'A' * block_length + bytes([x])
+            dictionary_ct = prefix_ecb_encryption_oracle(dictionary_pt)
+            dictionary_ct_blocks = split_by_length(dictionary_ct, block_length)
+            dictionary.setdefault(dictionary_ct_blocks[-1], x)
 
     result = []
     if mode_of_operation == "ECB":
         for byte in target_bytes:
             trial_plaintext = b'A' * block_length + bytes([byte])
-            trial_ciphertext = ECB_encryption_oracle(trial_plaintext)
+            trial_ciphertext = prefix_ecb_encryption_oracle(trial_plaintext)
             trial_ciphertext_blocks = split_by_length(trial_ciphertext, block_length)
-            try:
-                result.append(dictionary[trial_ciphertext_blocks[-1]])
-            except Exception as e:
-                import pdb; pdb.set_trace()
+            result.append(dictionary.get(trial_ciphertext_blocks[-1], 0))
 
     target_result = bytes(result).decode()
     print("Target is :\n" + target_result)

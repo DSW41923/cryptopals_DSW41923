@@ -1,7 +1,5 @@
 import sys
-import codecs
 import getopt
-import binascii
 import secrets
 
 from cryptography.hazmat.primitives.hashes import Hash, SHA1
@@ -13,7 +11,7 @@ from challenge_08 import split_by_length
 def left_rotate(num, rotate_length):
     return ((num << rotate_length) | (num >> (32 - rotate_length))) & 0xFFFFFFFF
 
-class SHA1_prefix_MAC(object):
+class SHA1PrefixMAC(object):
     """
     SHA1_prefix_MAC
     Implementing SHA1 for MAC, with the ability to set internal chunks
@@ -21,10 +19,11 @@ class SHA1_prefix_MAC(object):
     """
 
     def __init__(self, key):
-        super(SHA1_prefix_MAC, self).__init__()
+        super(SHA1PrefixMAC, self).__init__()
         self.key = key
 
-    def preprocess(self, text):
+    @staticmethod
+    def preprocess(text):
 
         if type(text) != bytes:
             text = text.encode()
@@ -99,7 +98,7 @@ class SHA1_prefix_MAC(object):
 
         self.h0, self.h1, self.h2, self.h3, self.h4 = a, b, c, d, e
 
-    def MAC_text(self, text):
+    def mac_text(self, text):
         text = self.key + text
         self.set_chunk(0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0)
         text_bin_string = self.preprocess(text)
@@ -107,9 +106,9 @@ class SHA1_prefix_MAC(object):
 
     def verify(self, text, hash_value):
 
-        return (self.MAC_text(text) == hash_value)
+        return self.mac_text(text) == hash_value
 
-def prefix_SHA1_MAC(key, text):
+def prefix_sha1_mac(key, text):
 
     if type(text) != bytes:
         text = text.encode()
@@ -137,24 +136,24 @@ def main(argv):
 
     key = secrets.token_bytes(16)
     text = b"YELLOW SUBMARINE"
-    correct_MAC = prefix_SHA1_MAC(key, text)
+    correct_mac = prefix_sha1_mac(key, text)
 
     # Verifying the implementation
-    MAC_generator = SHA1_prefix_MAC(key)
-    testing_MAC = MAC_generator.MAC_text(text)
-    print("Implementation successful? " + str(bool(testing_MAC == correct_MAC)))
+    mac_generator = SHA1PrefixMAC(key)
+    testing_mac = mac_generator.mac_text(text)
+    print("Implementation successful? " + str(bool(testing_mac == correct_mac)))
 
     
     new_text = text[:-10] + b" SUB MARINE"
     print("Original text is " + text.decode())
     print("New text is " + new_text.decode())
-    print("Same MAC? " + str(MAC_generator.verify(new_text, testing_MAC)))
+    print("Same MAC? " + str(mac_generator.verify(new_text, testing_mac)))
 
     for x in range(2 ** 24):
         trial_key = secrets.token_bytes(16)
         trial_text = b"YELLOW SUBMARINE"
-        trial_MAC = SHA1_prefix_MAC(trial_key).MAC_text(trial_text)
-        if (trial_MAC == testing_MAC) and (trial_key != key):
+        trial_mac = SHA1PrefixMAC(trial_key).mac_text(trial_text)
+        if (trial_mac == testing_mac) and (trial_key != key):
             print(b"Found second key for this input and MAC! " + trial_key)
     print("Couldn't find second key for this input and MAC!")
 

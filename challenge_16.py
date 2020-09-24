@@ -1,25 +1,24 @@
 import sys
 import getopt
-import binascii
 import secrets
 
 from challenge_02 import bytestrxor
-from challenge_10 import CBC_Encryptor, CBC_Decryptor
+from challenge_10 import cbc_encryptor, cbc_decryptor
 
 
 CBC_KEY = secrets.token_bytes(16)
 
 
-def encrypt_data_CBC(text):
+def encrypt_data_cbc(text):
     quoted_text = text.replace(";", "\\;").replace("=", "\\=")
     plaintext = "comment1=cooking%20MCs;userdata={};comment2=%20like%20a%20pound%20of%20bacon".format(quoted_text)
     iv = secrets.token_bytes(16)
-    ciphertext = CBC_Encryptor(CBC_KEY, plaintext.encode(), iv)
+    ciphertext = cbc_encryptor(CBC_KEY, plaintext.encode(), iv)
     return ciphertext
 
 def decrypt_and_detect(ciphertext, text=b";admin=true;"):
-    plaintext = CBC_Decryptor(CBC_KEY, ciphertext)
-    if type(text) != bytes:
+    plaintext = cbc_decryptor(CBC_KEY, ciphertext)
+    if type(text) == str:
         text = text.encode()
     return text in plaintext
 
@@ -40,7 +39,7 @@ def main(argv):
 
     # Create a simple ciphertext
     data = 'A' * 16
-    ciphertext = encrypt_data_CBC(data)
+    ciphertext = encrypt_data_cbc(data)
     print("Is there \";admin=true;\" detected? " + str(decrypt_and_detect(ciphertext)))
     print("Attacking...")
 

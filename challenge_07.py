@@ -1,5 +1,4 @@
 import sys
-import codecs
 import getopt
 import binascii
 import base64

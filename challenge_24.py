@@ -1,20 +1,15 @@
 import sys
 import getopt
-import binascii
-import base64
 import secrets
 import time
 
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-
 from challenge_02 import bytestrxor
-from challenge_21 import MT19937_RNG
+from challenge_21 import MT19937RNG
 
 
-def MT19937_RNG_cryptor(text, seed):
+def mt19937_rng_cryptor(text, seed):
 
-    rng = MT19937_RNG(seed)
+    rng = MT19937RNG(seed)
     key_string = rng.extract_number()
 
     while len(key_string) < (len(text) * 8):
@@ -47,18 +42,18 @@ def main(argv):
     # Testing encrypt and decrypt
     plaintext = random_prefix_text(b"AAAAAAAAAAAAAAAAAAAA")
     testing_seed = secrets.choice(range(2 ** 16))
-    ciphertext = MT19937_RNG_cryptor(plaintext, testing_seed)
-    if MT19937_RNG_cryptor(ciphertext, testing_seed) != plaintext:
+    ciphertext = mt19937_rng_cryptor(plaintext, testing_seed)
+    if mt19937_rng_cryptor(ciphertext, testing_seed) != plaintext:
         print("Incorrect cipher implementation!")
     else:
         print("Correct Implementation! Good Job!")
 
-    # Manipulate paintext to recover key(seed) from ciphertext
+    # Manipulate plaintext to recover key(seed) from ciphertext
     plaintext = random_prefix_text(b"A" * 7)
     testing_seed = secrets.choice(range(2 ** 16))
-    ciphertext = MT19937_RNG_cryptor(plaintext, testing_seed)
+    ciphertext = mt19937_rng_cryptor(plaintext, testing_seed)
     for s in range(2 ** 16):
-        trial_plaintext = MT19937_RNG_cryptor(ciphertext, s)
+        trial_plaintext = mt19937_rng_cryptor(ciphertext, s)
         if b"AAAA" in trial_plaintext:
             print("Got seed!")
             print("Seed is " + bin(s)[2:].zfill(16))
@@ -66,14 +61,14 @@ def main(argv):
 
     # Generate Key Rest Token with RNG and break it
     seed = int(time.time())
-    target_rng = MT19937_RNG(seed)
+    target_rng = MT19937RNG(seed)
     reset_token = target_rng.extract_number()
     time.sleep(secrets.choice(range(40, 1000)))
 
     trial_start_time = time.time()
     for s in range(2 ** 16):
         trial_seed = int(trial_start_time) - s
-        trial_token = MT19937_RNG(trial_seed).extract_number()
+        trial_token = MT19937RNG(trial_seed).extract_number()
         if trial_token == reset_token:
             print("Got seed for generating reset token!")
             print("Seed is " + bin(trial_seed)[2:].zfill(32))

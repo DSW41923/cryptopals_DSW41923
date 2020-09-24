@@ -11,7 +11,7 @@ from challenge_08 import split_by_length
 from challenge_09 import padding_to_length
 
 
-def CBC_Encryptor(key, plaintext, iv):
+def cbc_encryptor(key, plaintext, iv):
     # Prepare encryptor
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
@@ -32,7 +32,7 @@ def CBC_Encryptor(key, plaintext, iv):
         ciphertext_result.append(ciphertext)
     return iv + b''.join(ciphertext_result)
 
-def CBC_Decryptor(key, ciphertext):
+def cbc_decryptor(key, ciphertext):
     # Prepare decryptor
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
@@ -80,7 +80,7 @@ def main(argv):
             print("Decoding Error: " + str(e))
             sys.exit(2)
         else:
-            plaintext = CBC_Decryptor(key, ciphertext)
+            plaintext = cbc_decryptor(key, ciphertext)
             print("Plaintext is: " + plaintext.decode())
 
 

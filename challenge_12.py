@@ -1,39 +1,24 @@
 import sys
 import getopt
-import binascii
 import base64
 import secrets
 
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-
-from challenge_02 import bytestrxor
 from challenge_08 import split_by_length
-from challenge_09 import padding_to_length
+from challenge_11 import ecb_encryptor
 
 
 KEY = secrets.token_bytes(16)
 
 
-def ECB_encryption_oracle(string):
+def ecb_encryption_oracle(plaintext):
     # Remove random prefix and affix based on challenge 14
-
-    plaintext = string
-    plaintext_blocks = split_by_length(plaintext, 16)
-    if len(plaintext_blocks[-1]) < 16:
-        plaintext_blocks[-1] = padding_to_length(plaintext_blocks[-1], 16)
-    plaintext = b''.join(plaintext_blocks)
-    backend = default_backend()
-    cipher = Cipher(algorithms.AES(KEY), modes.ECB(), backend=backend)
-    encryptor = cipher.encryptor()
-    ciphertext = encryptor.update(plaintext) + encryptor.finalize()
-
+    ciphertext = ecb_encryptor(plaintext, KEY)
     return ciphertext
 
 def detect_mode_of_operation(ciphertext):
     ciphertext_block = split_by_length(ciphertext, 16)
     for block in ciphertext_block:
-        if (ciphertext_block.count(block) > 1):
+        if ciphertext_block.count(block) > 1:
             return "ECB"
     return "Unknown"
 
@@ -41,15 +26,16 @@ def detect_block_length(oracle):
     previous_ct_length = 0
     for length in range(1, 50):
         plaintext = b'A' * length
-        cipertext = oracle(plaintext)
-        if len(cipertext) != previous_ct_length:
+        ciphertext = oracle(plaintext)
+        if len(ciphertext) != previous_ct_length:
             if previous_ct_length == 0:
-                previous_ct_length = len(cipertext)
+                previous_ct_length = len(ciphertext)
             else:
-                return len(cipertext) - previous_ct_length
+                return len(ciphertext) - previous_ct_length
     return previous_ct_length
 
 
+# noinspection SpellCheckingInspection
 def main(argv):
 
     try:
@@ -71,23 +57,23 @@ def main(argv):
     target_bytes = base64.b64decode(target.encode())
 
     # Detecting length of block and mode of operation
-    block_length = detect_block_length(ECB_encryption_oracle)
+    block_length = detect_block_length(ecb_encryption_oracle)
     testing_inputs = secrets.token_bytes(1) * 128
-    ciphertext = ECB_encryption_oracle(testing_inputs)
+    ciphertext = ecb_encryption_oracle(testing_inputs)
     mode_of_operation = detect_mode_of_operation(ciphertext)
 
     # Generate dictionary for all possible ciphertext
     dictionary = {}
     for x in range(256):
         dictionary_pt = b'A' * (block_length - 1) + bytes([x])
-        dictionary_ct = ECB_encryption_oracle(dictionary_pt)
+        dictionary_ct = ecb_encryption_oracle(dictionary_pt)
         dictionary[dictionary_ct] = x
 
     result = []
     if mode_of_operation == "ECB":
         for byte in target_bytes:
             trial_plaintext = b'A' * (block_length - 1) + bytes([byte])
-            trial_ciphertext = ECB_encryption_oracle(trial_plaintext)
+            trial_ciphertext = ecb_encryption_oracle(trial_plaintext)
             result.append(dictionary[trial_ciphertext])
 
     target_result = bytes(result).decode()

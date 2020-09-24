@@ -1,10 +1,8 @@
 import sys
 import getopt
-import binascii
 import secrets
 
-from challenge_02 import bytestrxor
-from challenge_18 import CTR_cryptor
+from challenge_18 import ctr_cryptor
 from challenge_25 import edit
 
 
@@ -12,14 +10,14 @@ NONCE = bytes([0] * 8)
 CTR_KEY = secrets.token_bytes(16)
 
 
-def encrypt_data_CTR(text):
+def encrypt_data_ctr(text):
     quoted_text = text.replace(";", "\\;").replace("=", "\\=")
     plaintext = "comment1=cooking%20MCs;userdata={};comment2=%20like%20a%20pound%20of%20bacon".format(quoted_text)
-    ciphertext = CTR_cryptor(plaintext.encode(), CTR_KEY, NONCE)
+    ciphertext = ctr_cryptor(plaintext.encode(), CTR_KEY, NONCE)
     return ciphertext
 
 def decrypt_and_detect(ciphertext, text=b";admin=true;"):
-    plaintext = CTR_cryptor(ciphertext, CTR_KEY, NONCE)
+    plaintext = ctr_cryptor(ciphertext, CTR_KEY, NONCE)
     if type(text) != bytes:
         text = text.encode()
     return text in plaintext
@@ -41,7 +39,7 @@ def main(argv):
 
     # Create a simple ciphertext
     data = 'A' * 16
-    ciphertext = encrypt_data_CTR(data)
+    ciphertext = encrypt_data_ctr(data)
     print("Is there \";admin=true;\" detected? " + str(decrypt_and_detect(ciphertext)))
     print("Attacking...")
 

@@ -2,10 +2,9 @@ import sys
 import codecs
 import getopt
 import binascii
-import string
 
 from challenge_02 import bytestrxor
-from challenge_03 import evaluate_palintext
+from challenge_03 import evaluate_plaintext
 
 
 def main(argv):
@@ -43,7 +42,7 @@ def main(argv):
             for x in range(1, 256):
                 possible_key = x.to_bytes(1, 'big') * len(origin_ciphertext)
                 possible_plaintext = bytestrxor(origin_ciphertext, possible_key)
-                current_evaluation_point = evaluate_palintext(possible_plaintext)
+                current_evaluation_point = evaluate_plaintext(possible_plaintext)
                 if current_evaluation_point > best_evaluation_point:
                     best_evaluation_point = current_evaluation_point
                     best_evaluation_plaintext = [(current_evaluation_point, possible_key, possible_plaintext)]
@@ -58,7 +57,7 @@ def main(argv):
             if score > best_score:
                 best_score = score
                 best_lines = [(line_num, score, key, plaintext)]
-            elif score == best_evaluation_point:
+            elif score == best_score:
                 best_lines.append((line_num, best_score, key, plaintext))
 
         for line_num, score, key, plaintext in best_lines:

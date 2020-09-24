@@ -1,6 +1,5 @@
 import sys
 import getopt
-import binascii
 import base64
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -10,7 +9,7 @@ from challenge_02 import bytestrxor
 from challenge_08 import split_by_length
 
 
-def CTR_cryptor(text, key, nonce):
+def ctr_cryptor(text, key, nonce):
 
     # Prepare encryptor
     backend = default_backend()
@@ -44,9 +43,10 @@ def main(argv):
 
     nonce = bytes([0] * 8)
     key = b"YELLOW SUBMARINE"
+    # noinspection SpellCheckingInspection
     ciphertext = b"L77na/nrFsKvynd6HzOoG7GHTLXsTVu9qvY/2syLXzhPweyyMTJULu/6/kXX0KSvoOLSFQ=="
     decoded_ciphertext = base64.b64decode(ciphertext)
-    plaintext = CTR_cryptor(decoded_ciphertext, key, nonce)
+    plaintext = ctr_cryptor(decoded_ciphertext, key, nonce)
     print(b"Plaintext is : " + plaintext)
 
 

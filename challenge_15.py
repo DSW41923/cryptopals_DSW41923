@@ -1,9 +1,5 @@
 import sys
 import getopt
-import binascii
-import string
-
-from challenge_09 import padding_to_length
 
 
 def verify_padding(text, length):

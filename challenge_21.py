@@ -1,12 +1,10 @@
 import sys
 import getopt
-import binascii
-import base64
 import secrets
 import time
 
 
-class MT19937_RNG(object):
+class MT19937RNG(object):
     """Implementing MT19937 Mersenne Twister RNG"""
     # Parameters of MT19937
     w, n, m, r = 32, 624, 397, 31
@@ -17,7 +15,7 @@ class MT19937_RNG(object):
     f = 1812433253
     l = 18
     def __init__(self, seed):
-        super(MT19937_RNG, self).__init__()
+        super(MT19937RNG, self).__init__()
         self.state = []
         self.count = 0
         self.seed_mt(seed)
@@ -51,10 +49,10 @@ class MT19937_RNG(object):
             current_state_bit = bin(self.state[i])[2:].zfill(self.w)
             next_state_bit = bin(self.state[(i + 1) % self.n])[2:].zfill(self.w)
             x = int(current_state_bit[:(self.w - self.r)] + next_state_bit[-self.r:], 2)
-            xA = x >> 1
+            x_a = x >> 1
             if (x % 2) != 0:
-                 xA = xA ^ self.a
-            self.state[i] = self.state[(i + self.m) % self.n] ^ xA
+                 x_a = x_a ^ self.a
+            self.state[i] = self.state[(i + self.m) % self.n] ^ x_a
 
         self.count = 0
 
@@ -75,25 +73,25 @@ def main(argv):
 
     # Trying the MT19937 RNG
     seed = secrets.choice(range(2 ** 32 - 1))
-    first_RNG = MT19937_RNG(seed)
+    first_rng = MT19937RNG(seed)
     outputs = []
     for x in range(64):
-        number = first_RNG.extract_number()
+        number = first_rng.extract_number()
         outputs.append(number)
 
     time.sleep(13)
 
     new_seed = seed
-    second_RNG = MT19937_RNG(new_seed)
+    second_rng = MT19937RNG(new_seed)
     for x in range(64):
-        new_number = second_RNG.extract_number()
+        new_number = second_rng.extract_number()
         if outputs[x] != new_number:
             print(seed, new_seed)
             print(outputs[x], new_number)
             print(x)
-            print("Incorrect implementaion!")
+            print("Incorrect implementation!")
             sys.exit(2)
-    print("Correct implementaion! Good Job!")
+    print("Correct implementation! Good Job!")
 
 
 if __name__ == "__main__":
