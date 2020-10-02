@@ -9,7 +9,6 @@ from challenge_25 import edit
 NONCE = bytes([0] * 8)
 CTR_KEY = secrets.token_bytes(16)
 
-
 def encrypt_data_ctr(text):
     quoted_text = text.replace(";", "\\;").replace("=", "\\=")
     plaintext = "comment1=cooking%20MCs;userdata={};comment2=%20like%20a%20pound%20of%20bacon".format(quoted_text)

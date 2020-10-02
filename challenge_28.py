@@ -8,6 +8,12 @@ from cryptography.hazmat.backends import default_backend
 from challenge_08 import split_by_length
 
 
+A = 0x67452301
+B = 0xEFCDAB89
+C = 0x98BADCFE
+D = 0x10325476
+E = 0xC3D2E1F0
+
 def left_rotate(num, rotate_length):
     return ((num << rotate_length) | (num >> (32 - rotate_length))) & 0xFFFFFFFF
 
@@ -15,12 +21,13 @@ class SHA1PrefixMAC(object):
     """
     SHA1_prefix_MAC
     Implementing SHA1 for MAC, with the ability to set internal chunks
-    All intergers are in big-endian    
+    All integers are in big-endian
     """
 
-    def __init__(self, key):
+    def __init__(self, key, a=A, b=B, c=C, d=D, e=E):
         super(SHA1PrefixMAC, self).__init__()
         self.key = key
+        self.h0, self.h1, self.h2, self.h3, self.h4 = a, b, c, d, e
 
     @staticmethod
     def preprocess(text):
@@ -62,21 +69,21 @@ class SHA1PrefixMAC(object):
             for j in range(80):
                 if j in range(20):
                     '''
-                    f = (b & c) | ((~b) & d) in the pesudocode from Wiki
-                    ~ seems weird though the reault is still correct
+                    f = (b & c) | ((~b) & d) in the pseudocode from Wiki
+                    ~ seems weird though the result is still correct
                     Use the following substitution
                     '''
                     f = (((c ^ d) & b) ^ d)
                     k = 0x5A827999
-                elif j in range(20, 40):
-                    f = b ^ c ^ d
-                    k = 0x6ED9EBA1
                 elif j in range(40, 60):
                     f = (b & c) | (b & d) | (c & d) 
                     k = 0x8F1BBCDC
-                elif j in range(60, 80):
+                else:
                     f = b ^ c ^ d
-                    k = 0xCA62C1D6
+                    if j in range(20, 40):
+                        k = 0x6ED9EBA1
+                    else:
+                        k = 0xCA62C1D6
 
                 temp = (left_rotate(a, 5) + f + e + k + words[j]) & 0xFFFFFFFF
                 e = d
@@ -100,7 +107,7 @@ class SHA1PrefixMAC(object):
 
     def mac_text(self, text):
         text = self.key + text
-        self.set_chunk(0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0)
+        self.set_chunk(A, B, C, D, E)
         text_bin_string = self.preprocess(text)
         return self.calculate_hashing(text_bin_string)
 

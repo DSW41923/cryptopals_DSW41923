@@ -10,7 +10,6 @@ from challenge_18 import ctr_cryptor
 
 AES_KEY = secrets.token_bytes(16)
 
-
 def fixed_nonce_ctr_cryptor(text):
     nonce = bytes([0] * 8)
     return ctr_cryptor(text, AES_KEY, nonce)

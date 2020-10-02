@@ -9,7 +9,6 @@ from challenge_10 import cbc_encryptor, cbc_decryptor
 
 CBC_KEY = secrets.token_bytes(16)
 
-
 def encrypt_checked_data_cbc(plaintext):
     if type(plaintext) != bytes:
         plaintext = plaintext.encode()

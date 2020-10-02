@@ -6,6 +6,12 @@ from challenge_08 import split_by_length
 from challenge_28 import left_rotate
 from challenge_29 import get_desired_extended_text
 
+
+A = 0x67452301
+B = 0xEFCDAB89
+C = 0x98BADCFE
+D = 0x10325476
+
 class MD4PrefixMAC(object):
     """
     MD4_prefix_MAC
@@ -13,9 +19,10 @@ class MD4PrefixMAC(object):
     All integers are in big-endian
     """
 
-    def __init__(self, key):
+    def __init__(self, key, a=A, b=B, c=C, d=D):
         super(MD4PrefixMAC, self).__init__()
         self.key = key
+        self.h0, self.h1, self.h2, self.h3 = a, b, c, d
 
     @staticmethod
     def preprocess(text):
@@ -64,7 +71,8 @@ class MD4PrefixMAC(object):
                     L = 0x5A827999
                     X = [3, 5, 9, 13]
                     Ki = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
-                elif n in range(32, 48):
+                else:
+                    # n in range(32, 48)
                     F = h[j] ^ h[k] ^ h[l]
                     L = 0x6ED9EBA1
                     X = [3, 9, 11, 15]
@@ -90,14 +98,13 @@ class MD4PrefixMAC(object):
     def mac_text(self, text):
 
         text = self.key + text
-        self.set_chunk(0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476)
+        self.set_chunk(A, B, C, D)
         text_bin_string = self.preprocess(text)
         return self.calculate_hashing(text_bin_string)
 
     def verify(self, text, hash_value):
 
         return self.mac_text(text) == hash_value
-
 
 
 def main(argv):
@@ -142,8 +149,8 @@ def main(argv):
 
     mac_generator = MD4PrefixMAC(key)
     original_mac = mac_generator.mac_text(text)
-    splitted_original_mac_hex = split_by_length(original_mac.hex(), 8)
-    new_states = tuple(map(lambda x: int.from_bytes(int(x, 16).to_bytes(4, 'big'), 'little'), splitted_original_mac_hex))
+    split_original_mac_hex = split_by_length(original_mac.hex(), 8)
+    new_states = tuple(map(lambda x: int.from_bytes(int(x, 16).to_bytes(4, 'big'), 'little'), split_original_mac_hex))
     get_desired_extended_text(text, mac_generator, new_states, target)
 
 if __name__ == "__main__":

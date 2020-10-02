@@ -9,7 +9,6 @@ from challenge_11 import ecb_encryptor
 
 KEY = secrets.token_bytes(16)
 
-
 def ecb_encryption_oracle(plaintext):
     # Remove random prefix and affix based on challenge 14
     ciphertext = ecb_encryptor(plaintext, KEY)

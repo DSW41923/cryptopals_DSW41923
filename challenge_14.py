@@ -8,9 +8,7 @@ from challenge_11 import ecb_encryptor
 from challenge_12 import detect_mode_of_operation, detect_block_length
 
 
-
 KEY = secrets.token_bytes(16)
-
 
 def prefix_ecb_encryption_oracle(plaintext):
 

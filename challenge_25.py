@@ -10,7 +10,6 @@ from challenge_18 import ctr_cryptor
 NONCE = bytes([0] * 8)
 CTR_KEY = secrets.token_bytes(16)
 
-
 def edit(ciphertext, key, offset, new_text):
     plaintext = ctr_cryptor(ciphertext, key, NONCE)
     new_plaintext = plaintext[:offset] + new_text + plaintext[offset + len(new_text):]
