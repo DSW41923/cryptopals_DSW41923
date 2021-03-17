@@ -2,53 +2,90 @@ import sys
 import getopt
 import secrets
 import requests
+import time
 
-from multiprocessing import Process, Manager
 
+def insecure_compare(delay, file_signature, hmac):
 
-def get_signature_candidates(file_name, url, signature, min_response_time, new_signature_candidates):
-    new_candidates = []
-    manager = Manager()
-    byte_candidates = manager.list()
-    processes = []
-    for x in range(16):
-        p = Process(target=get_byte_candidates,
-                    args=(file_name, url, signature, min_response_time, byte_candidates, x))
-        p.start()
-        processes.append(p)
+    for b1, b2 in zip(file_signature, hmac):
+        if b1 != b2:
+            return False
+        else:
+            time.sleep(delay)
 
-    for p in processes:
-        p.join()
+    return True
 
-    for b in byte_candidates:
-        new_candidates.append(signature + b.to_bytes(1, 'big'))
-    new_signature_candidates.extend(new_candidates)
+def get_correct_signature(url, file_name, timing_difference):
 
-def get_byte_candidates(file_name, url, signature, min_response_time, new_candidates, leap):
+    signature_candidates = [b'']
+    min_response_time = 0
 
-    response_time_record = []
-    for y in range(leap, 256, 16):
-        trial_byte = y.to_bytes(1, 'big')
-        trial_signature = signature + trial_byte + bytes([0] * (19 - len(signature)))
-        trial_signature = trial_signature.hex()
-        trial_payload = {'file': file_name, 'signature': trial_signature}
+    while any([len(s) != 20 for s in signature_candidates]):
+        ideal_response_time = min_response_time + timing_difference
+        response_time_record = []
+        new_signature_candidates = []
+        for s in signature_candidates:
+            byte_candidates, response_time = get_byte_candidates(
+                url, file_name, s, ideal_response_time, min_response_time)
+            if byte_candidates:
+                new_signature_candidates.extend([(s + b.to_bytes(1, 'big')) for b in byte_candidates])
+                response_time_record.append(response_time)
+                if response_time == 1:
+                    break
+        if new_signature_candidates and response_time_record:
+            min_response_time = (min(response_time_record) // timing_difference) * timing_difference
+            signature_candidates = new_signature_candidates
+        else:
+            min_response_time -= timing_difference
 
+    for s in signature_candidates:
+        trial_payload = {'file': file_name, 'signature': s.hex()}
         response = requests.get(url, params=trial_payload)
         if response.status_code == 200:
-            new_candidates.extend([y])
-            break
-        elif response.status_code == 500 and len(signature) < 19:
-            response_time = [response.elapsed.total_seconds()]
-            for z in range((len(signature) // 2) * 5 + 4):
-                response = requests.get(url, params=trial_payload)
-                response_time.append(response.elapsed.total_seconds())
-                if response.elapsed.total_seconds() < min_response_time:
-                    break
-            response_time_record.append(min(response_time))
+            return s
 
-    if len(signature) < 19:
-        candidates = [x for x in response_time_record if x >= min_response_time]
-        new_candidates.extend([(16 * response_time_record.index(m) + leap) for m in candidates])
+def get_byte_candidates(url, file_name, signature, ideal_response_time, min_response_time):
+
+    byte_candidates = []
+    byte_trial_results = []
+    for x in range(256):
+        trial_signature = signature + x.to_bytes(1, 'big') + bytes([0] * (19 - len(signature)))
+        trial_payload = {'file': file_name, 'signature': trial_signature.hex()}
+        trial_result = try_byte_candidate(url, trial_payload, ideal_response_time, len(signature))
+        if trial_result == 1:
+            return[x], 1
+        elif trial_result < min_response_time:
+            return [], 0
+        elif trial_result >= ideal_response_time and len(signature) < 19:
+            byte_candidates.append(x)
+            byte_trial_results.append(trial_result)
+        else:
+            continue
+
+    if len(byte_candidates) > 0:
+        print("Found {} byte candidates for the next byte of current signature {}".format(
+            len(byte_candidates), signature.hex()))
+
+    return byte_candidates, min(byte_trial_results) if byte_trial_results else 0
+
+def try_byte_candidate(url, payload, ideal_response_time, correct_signature_length):
+
+    response_time_record = []
+    for z in range(10):
+        try:
+            response = requests.get(url, params=payload)
+            response_time = response.elapsed.total_seconds()
+            response_time_record.append(response_time)
+
+            if response.status_code == 200:
+                return 1
+            elif response.status_code == 500:
+                if correct_signature_length == 19 or response_time < ideal_response_time:
+                    break
+        except requests.exceptions.ConnectionError:
+            time.sleep(0.5)
+
+    return min(response_time_record)
 
 
 def main(argv):
@@ -65,32 +102,10 @@ def main(argv):
             print('Challenge 31: Implement and break HMAC-SHA1 with an artificial timing leak')
             sys.exit()
 
-    file_name = secrets.token_bytes(16).hex()
     target_url = 'http://127.0.0.1:8000/challenges/31'
-    manager = Manager()
-
-    signature_candidates = [b'']
-    for x in range(20):
-        min_response_time = 0.05 * (x + 1)
-        new_signature_candidates = manager.list()
-        processes = []
-        for s in signature_candidates:
-            p = Process(target=get_signature_candidates,
-                        args=(file_name, target_url, s, min_response_time, new_signature_candidates))
-            p.start()
-            processes.append(p)
-
-        for p in processes:
-            p.join()
-        signature_candidates = new_signature_candidates
-
-    correct_signature = None
-    for s in signature_candidates:
-        trial_payload = {'file': file_name, 'signature': s.hex()}
-        response = requests.get(target_url, params=trial_payload)
-        if response.status_code == 200:
-            correct_signature = s
-            break
+    file_name = secrets.token_bytes(16).hex()
+    timing_difference = 0.050
+    correct_signature = get_correct_signature(target_url, file_name, timing_difference)
 
     if correct_signature:
         print("Correct signature of file {} is {}".format(file_name, correct_signature.hex()))
