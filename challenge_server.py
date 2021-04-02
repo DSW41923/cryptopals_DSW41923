@@ -13,11 +13,12 @@ from challenge_31 import insecure_compare
 
 KEY = secrets.token_bytes(16)
 
-class HMACbySHA1(object):
-    """docstring for HMAC_SHA1"""
-    def __init__(self):
-        super(HMACbySHA1, self).__init__()
-        self.blockSize = 512
+class HMAC(object):
+    """General HMAC for any hash function"""
+    def __init__(self, blockSize, mac_func):
+        super(HMAC, self).__init__()
+        self.blockSize = blockSize
+        self.mac_func = mac_func
 
     def hmac_text(self, key, message):
         if type(message) != bytes:
@@ -34,12 +35,10 @@ class HMACbySHA1(object):
 
         return self.mac_text(o_key_pad + self.mac_text(i_key_pad + message))
 
-    @staticmethod
-    def mac_text(text):
+    def mac_text(self, text):
         backend = default_backend()
-        digest = Hash(SHA1(), backend=backend)
+        digest = Hash(self.mac_func(), backend=backend)
         digest.update(text)
-
         return digest.finalize()
 
 class CryptopalRequestHandler(http.server.BaseHTTPRequestHandler):
@@ -63,7 +62,7 @@ class CryptopalRequestHandler(http.server.BaseHTTPRequestHandler):
             signature = request_query.get('signature')[0]
             signature = bytes.fromhex(signature)
 
-            hmac_generator = HMACbySHA1()
+            hmac_generator = HMAC(blockSize=512, mac_func=SHA1)
             hmac = hmac_generator.hmac_text(KEY, file)
 
             if len(signature) != len(hmac):
