@@ -69,7 +69,10 @@ def g_mitm_dh_demo(p, g, a, b, mitm):
         mitm_bytes = get_mitmbytes(p, g, A, B)
         cbc_key_m = get_cbc_key(backend, mitm_bytes)
         decrypted_msg = cbc_decryptor(cbc_key_m, encrypted_msg)
-        print("Man in the middle can decrypt the message: {}\n".format(decrypted_msg))
+        print("Man in the middle can decrypt the message: {}".format(decrypted_msg))
+
+    # Print for better look
+    print("\n")
 
 
 def main():
