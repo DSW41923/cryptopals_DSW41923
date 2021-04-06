@@ -11,7 +11,7 @@ def power_mod(b, e, m):
         )
     return x
 
-
+# noinspection PyPep8Naming
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("a", help="A's secret key for Diffie-Hellman")

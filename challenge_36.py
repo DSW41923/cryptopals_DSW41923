@@ -21,7 +21,7 @@ I = "challenge_36@cryptopals.com"
 P = secrets.token_bytes(16)
 
 
-def simple_sha256(text):
+def simple_sha256(text: bytes) -> bytes:
     backend = default_backend()
     digest = Hash(SHA256(), backend=backend)
     digest.update(text)

@@ -28,6 +28,7 @@ def get_mitmbytes(p, g, A, B):
     else:
         return "Out of Scope of This Challenge"
 
+# noinspection PyPep8Naming
 def g_mitm_dh_demo(p, g, a, b, mitm):
 
     # A sending group parameters

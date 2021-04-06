@@ -34,7 +34,6 @@ def breaking_srp(A):
     hmac_sha256 = HMAC(blockSize=512, mac_func=SHA256)
 
     # Server S doing something
-    # By description salt should be a random integer, but I generate as random byte so that it can concat to P directly
     salt = secrets.token_bytes(16)
     xH = simple_sha256(salt + P)
     x = int(xH.hex(), 16)
@@ -91,7 +90,7 @@ def breaking_srp(A):
 
 def main():
     parser = argparse.ArgumentParser()
-    args = parser.parse_args()
+    parser.parse_args()
 
     print("Challenge 37: Break SRP with a zero key")
     print("Breaking SRP when client C send A=0")

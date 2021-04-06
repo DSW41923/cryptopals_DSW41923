@@ -10,6 +10,7 @@ from challenge_33 import power_mod
 CBC_IV = secrets.token_bytes(16)
 
 
+# noinspection PyPep8Naming
 def DH_demo(p, g, a, b, mitm=False):
 
     # A sending keys
