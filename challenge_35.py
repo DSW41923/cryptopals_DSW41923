@@ -15,6 +15,8 @@ def get_cbc_key(backend, key_bytes):
     digest.update(key_bytes)
     return digest.finalize()[:16]
 
+
+# noinspection PyPep8Naming
 def get_mitmbytes(p, g, A, B):
     if g == 1:
         return (1).to_bytes(2, 'big')

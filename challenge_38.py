@@ -60,16 +60,15 @@ P = random.choice(PASSWORD_DICTIONARY)
 # noinspection PyPep8Naming
 def password_cracking(max_bytes, hmac_func, salt, A, b, B, u, C_hmac, **kwargs):
     for p in PASSWORD_DICTIONARY:
-        trial_password = ''.join(p).encode()
-        trial_x = int.from_bytes(simple_sha256(salt + trial_password), 'big')
-        mitm_S = (power_mod(A, b, N) *
-                  power_mod(B, u * trial_x, N) % N)
+        trial_password_bytes = p.encode()
+        trial_x = int.from_bytes(simple_sha256(salt + trial_password_bytes), 'big')
+        mitm_S = (power_mod(A, b, N) * power_mod(B, u * trial_x, N) % N)
         mitm_K = simple_sha256(mitm_S.to_bytes(max_bytes, 'big'))
         mitm_hmac = hmac_func.hmac_text(mitm_K, salt)
         if mitm_hmac == C_hmac:
             print("Password cracked!")
             print("C's email is {}".format(kwargs['I']))
-            print("C's password is {}\n".format(trial_password.decode()))
+            print("C's password is {}\n".format(trial_password_bytes.decode()))
             return
 
 # noinspection PyPep8Naming
@@ -83,20 +82,19 @@ def dictionary_attack_over_simplified_srp(mitm):
     g, k = 2, 3
     a = int.from_bytes(secrets.token_bytes(2), 'big')
     b = int.from_bytes(secrets.token_bytes(2), 'big')
+    P_bytes = P.encode()
     hmac_sha256 = HMAC(blockSize=512, mac_func=SHA256)
     mitm_memory = {}
 
     # Server S doing something
     salt = secrets.token_bytes(16)
-    x = int.from_bytes(simple_sha256(salt + P.encode()), 'big')
+    x = int.from_bytes(simple_sha256(salt + P_bytes), 'big')
     v = power_mod(g, x, N)
-    memory_S = {'salt': salt, 'v': v}
 
     # Client C send something to S
     A = power_mod(g, a, N)
     print("C is sending I={}, A={} to S".format(I, A))
     S_received_A = A
-
     if mitm:
         print("Man in the middle here intercepting!")
         mitm_memory.update({'I': I, 'A': A})
@@ -105,21 +103,19 @@ def dictionary_attack_over_simplified_srp(mitm):
     B = power_mod(g, b, N)
     u = int.from_bytes(secrets.token_bytes(16), 'big')
     print("S is sending salt, B={}, u={} to C".format(B, u))
-    C_received_salt = memory_S['salt']
+    C_received_salt = salt
     C_received_B, C_received_u = B, u
     if mitm:
         print("Man in the middle here intercepting but give random values to C")
-        mitm_memory.update({'salt': secrets.token_bytes(16),
-                            'u': int.from_bytes(secrets.token_bytes(16), 'big'),
-                            'b': int.from_bytes(secrets.token_bytes(2), 'big'),
-                            })
-        mitm_memory['B'] = power_mod(g, mitm_memory['b'], N)
-        C_received_salt = mitm_memory['salt']
-        C_received_B = mitm_memory['B']
-        C_received_u = mitm_memory['u']
+        mitm_salt = secrets.token_bytes(16)
+        b = int.from_bytes(secrets.token_bytes(2), 'big')
+        B = power_mod(g, b, N)
+        u = int.from_bytes(secrets.token_bytes(16), 'big')
+        C_received_salt, C_received_B, C_received_u  = mitm_salt, B, u
+        mitm_memory.update({'salt': mitm_salt, 'u': u, 'b': b, 'B': B})
 
     # C computing final K and hmac
-    x = int.from_bytes(simple_sha256(C_received_salt + P.encode()), 'big')
+    x = int.from_bytes(simple_sha256(C_received_salt + P_bytes), 'big')
     C_computed_S = power_mod(C_received_B, a + C_received_u * x, N)
     C_computed_K = simple_sha256(C_computed_S.to_bytes(N_bytes, 'big'))
     C_computed_hmac = hmac_sha256.hmac_text(C_computed_K, C_received_salt)
@@ -136,7 +132,7 @@ def dictionary_attack_over_simplified_srp(mitm):
         # S computing final K and hmac
         S_computed_S = power_mod(S_received_A * power_mod(v, u, N), b, N)
         S_computed_K = simple_sha256(S_computed_S.to_bytes(N_bytes, 'big'))
-        S_computed_hmac = hmac_sha256.hmac_text(S_computed_K, memory_S['salt'])
+        S_computed_hmac = hmac_sha256.hmac_text(S_computed_K, salt)
         print("S computed HMAC-SHA256(K, salt) as {} in hex".format(S_computed_hmac.hex()))
         # S verifying
         if S_computed_hmac == C_computed_hmac:
