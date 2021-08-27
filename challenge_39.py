@@ -11,6 +11,7 @@ def generate_big_primes(e, length):
     p, q = private_key.private_numbers().p, private_key.private_numbers().q
     return p, q
 
+
 def invmod(a, n):
     mod_base = n
     x, y = 0, 1
@@ -24,6 +25,7 @@ def invmod(a, n):
     else:
         return x
 
+
 def simple_rsa_keygen(p, q, e):
     n = p * q
     et = (p - 1) * (q - 1)
@@ -32,19 +34,23 @@ def simple_rsa_keygen(p, q, e):
     sk = (d, n)
     return pk, sk
 
+
 def simple_rsa_encrypt(pk, m):
     e, n = pk
     return power_mod(m, e, n)
 
+
 def simple_rsa_decrypt(sk, c):
     d, n = sk
     return power_mod(c, d, n)
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.parse_args()
 
     print("Challenge 39: Implement RSA")
+
     def rsa_demonstration(p, q, m):
         pk, sk = simple_rsa_keygen(p, q, e=3)
         print("Try encrypting number {}".format(m))

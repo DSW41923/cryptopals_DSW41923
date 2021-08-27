@@ -6,9 +6,9 @@ import secrets
 from challenge_02 import bytestrxor
 from challenge_18 import ctr_cryptor
 
-
 NONCE = bytes([0] * 8)
 CTR_KEY = secrets.token_bytes(16)
+
 
 def edit(ciphertext, key, offset, new_text):
     plaintext = ctr_cryptor(ciphertext, key, NONCE)
@@ -17,9 +17,8 @@ def edit(ciphertext, key, offset, new_text):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_25.py [-h | --help]')
         sys.exit(2)

@@ -22,6 +22,7 @@ def ecb_encryptor(plaintext, key):
 
     return ciphertext
 
+
 def encryption_oracle(string):
     prefix_length = secrets.choice(range(5, 11))
     affix_length = secrets.choice(range(5, 11))
@@ -33,6 +34,7 @@ def encryption_oracle(string):
         return "ECB", ecb_encryptor(plaintext, key)
     elif choice == 1:
         return "CBC", cbc_encryptor(key, plaintext, iv)
+
 
 def detect_mode_of_operation(ciphertext):
     ciphertext_block = split_by_length(ciphertext, 16)
@@ -48,9 +50,8 @@ def detect_mode_of_operation(ciphertext):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_11.py [-h | --help]')
         sys.exit(2)
@@ -70,7 +71,7 @@ def main(argv):
         detected_mode = detect_mode_of_operation(ciphertext)
         if detected_mode == mode:
             success_detection += 1
-    print("Detection success rate = " + str(success_detection / float(trial_num)) )
+    print("Detection success rate = " + str(success_detection / float(trial_num)))
 
 
 if __name__ == "__main__":

@@ -8,7 +8,6 @@ from challenge_33 import power_mod
 from challenge_36 import simple_sha256, N
 from challenge_server import HMAC
 
-
 # Using top 200 most common passwords of the year 2020 from https://nordpass.com/most-common-passwords-list/
 # as password dictionary
 PASSWORD_DICTIONARY = ["123456", "123456789", "picture1", "password",
@@ -51,7 +50,7 @@ PASSWORD_DICTIONARY = ["123456", "123456789", "picture1", "password",
                        "whatever", "welcome", "ginger", "flower", "333333", "1111111111",
                        "robert", "samsung", "a12345", "loveme", "gabriel", "alexander",
                        "cheese", "passw0rd", "142536", "peanut", "11223344", "thomas", "angel1"]
-I = "challenge_38@cryptopals.com"
+II = "challenge_38@cryptopals.com"
 # Assume that client's password is one of the most common passwords
 # Choose randomly to mimic different careless clients
 P = random.choice(PASSWORD_DICTIONARY)
@@ -70,6 +69,7 @@ def password_cracking(max_bytes, hmac_func, salt, A, b, B, u, C_hmac, **kwargs):
             print("C's email is {}".format(kwargs['I']))
             print("C's password is {}\n".format(trial_password_bytes.decode()))
             return
+
 
 # noinspection PyPep8Naming
 def dictionary_attack_over_simplified_srp(mitm):
@@ -93,11 +93,11 @@ def dictionary_attack_over_simplified_srp(mitm):
 
     # Client C send something to S
     A = power_mod(g, a, N)
-    print("C is sending I={}, A={} to S".format(I, A))
+    print("C is sending I={}, A={} to S".format(II, A))
     S_received_A = A
     if mitm:
         print("Man in the middle here intercepting!")
-        mitm_memory.update({'I': I, 'A': A})
+        mitm_memory.update({'I': II, 'A': A})
 
     # S respond, simplified version
     B = power_mod(g, b, N)
@@ -111,7 +111,7 @@ def dictionary_attack_over_simplified_srp(mitm):
         b = int.from_bytes(secrets.token_bytes(2), 'big')
         B = power_mod(g, b, N)
         u = int.from_bytes(secrets.token_bytes(16), 'big')
-        C_received_salt, C_received_B, C_received_u  = mitm_salt, B, u
+        C_received_salt, C_received_B, C_received_u = mitm_salt, B, u
         mitm_memory.update({'salt': mitm_salt, 'u': u, 'b': b, 'B': B})
 
     # C computing final K and hmac
@@ -142,6 +142,7 @@ def dictionary_attack_over_simplified_srp(mitm):
             print("Unauthorized!")
         # Print for better look
         print("\n")
+
 
 def main():
     parser = argparse.ArgumentParser()

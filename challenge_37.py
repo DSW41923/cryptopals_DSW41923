@@ -7,7 +7,6 @@ from challenge_33 import power_mod
 from challenge_36 import simple_sha256
 from challenge_server import HMAC
 
-
 # N is a NIST prime
 N = int('ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024'
         'e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd'
@@ -17,7 +16,7 @@ N = int('ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024'
         'c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552'
         'bb9ed529077096966d670c354e4abc9804f1746c08ca237327fff'
         'fffffffffffff', 16)
-I = "challenge_37@cryptopals.com"
+II = "challenge_37@cryptopals.com"
 P = secrets.token_bytes(16)
 
 
@@ -41,7 +40,7 @@ def breaking_srp(A):
     memory_S = {'salt': salt, 'v': v}
 
     # Client C send something to S
-    print("C is sending I={}, A={} to S".format(I, A))
+    print("C is sending I={}, A={} to S".format(II, A))
     S_received_A = A
 
     # S respond
@@ -99,6 +98,7 @@ def main():
     breaking_srp(N)
     print("Breaking SRP when client C send A=N^2")
     breaking_srp(N ** 2)
+
 
 if __name__ == "__main__":
     main()

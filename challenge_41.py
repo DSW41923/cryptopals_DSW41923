@@ -7,7 +7,6 @@ from challenge_36 import simple_sha256
 from challenge_38 import PASSWORD_DICTIONARY
 from challenge_39 import invmod, generate_big_primes, simple_rsa_keygen, simple_rsa_encrypt, simple_rsa_decrypt
 
-
 P, Q = generate_big_primes(e=3, length=2048)
 PK, SK = simple_rsa_keygen(P, Q, 3)
 SERVER_MEMORY = []
@@ -24,6 +23,7 @@ def server_decrypt(c):
         time_elapsed = time.time() - start_time
         time.sleep(total_time - time_elapsed)
         return pt
+
 
 def main():
     parser = argparse.ArgumentParser()

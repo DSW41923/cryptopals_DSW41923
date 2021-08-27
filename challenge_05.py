@@ -13,9 +13,8 @@ def extend_key(text, desired_length):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_05.py [-h | --help]')
         sys.exit(2)
@@ -30,7 +29,7 @@ def main(argv):
         origin_plaintext = b"Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
         key_text = b"ICE"
         expected_ciphertext = ("0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272"
-            "a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")
+                               "a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")
     except binascii.Error as e:
         print("Decoding Error: " + str(e))
         sys.exit(2)

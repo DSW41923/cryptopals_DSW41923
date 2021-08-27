@@ -7,7 +7,6 @@ from math import log
 from challenge_33 import power_mod
 from challenge_server import HMAC
 
-
 # N is a NIST prime
 N = int('ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024'
         'e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd'
@@ -17,7 +16,7 @@ N = int('ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024'
         'c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552'
         'bb9ed529077096966d670c354e4abc9804f1746c08ca237327fff'
         'fffffffffffff', 16)
-I = "challenge_36@cryptopals.com"
+II = "challenge_36@cryptopals.com"
 P = secrets.token_bytes(16)
 
 
@@ -47,7 +46,7 @@ def secure_remote_password(a, b, g=2, k=3):
 
     # Client C send something to S
     A = power_mod(g, a, N)
-    print("C is sending I={}, A={} to S".format(I, A))
+    print("C is sending I={}, A={} to S".format(II, A))
     S_received_A = A
 
     # S respond
@@ -106,6 +105,7 @@ def main():
             print("Invalid secret key value!")
             return
         secure_remote_password(a, b)
+
 
 if __name__ == "__main__":
     main()

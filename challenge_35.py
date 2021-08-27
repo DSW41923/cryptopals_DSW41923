@@ -6,7 +6,6 @@ from cryptography.hazmat.backends import default_backend
 from challenge_10 import cbc_encryptor, cbc_decryptor
 from challenge_33 import power_mod
 
-
 CBC_IV = secrets.token_bytes(16)
 
 
@@ -22,17 +21,17 @@ def get_mitmbytes(p, g, A, B):
         return (1).to_bytes(2, 'big')
     elif g == p:
         return (0).to_bytes(2, 'big')
-    elif g == p-1:
-        if A == p-1 and B == p-1:
-            return (p-1).to_bytes(2, 'big')
+    elif g == p - 1:
+        if A == p - 1 and B == p - 1:
+            return (p - 1).to_bytes(2, 'big')
         else:
             return (1).to_bytes(2, 'big')
     else:
         return "Out of Scope of This Challenge"
 
+
 # noinspection PyPep8Naming
 def g_mitm_dh_demo(p, g, a, b, mitm):
-
     # A sending group parameters
     print("A is sending p={}, g={}.".format(p, g))
 
@@ -104,7 +103,7 @@ def main():
         g_mitm_dh_demo(p, p, a, b, args.MITM != 'n')
         # Breaking dh when g=p-1
         print("Break DH with g = p - 1")
-        g_mitm_dh_demo(p, p-1, a, b, args.MITM != 'n')
+        g_mitm_dh_demo(p, p - 1, a, b, args.MITM != 'n')
 
 
 if __name__ == "__main__":

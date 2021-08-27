@@ -10,7 +10,6 @@ from challenge_08 import split_by_length
 
 
 def ctr_cryptor(text, key, nonce):
-
     # Prepare encryptor
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
@@ -28,9 +27,8 @@ def ctr_cryptor(text, key, nonce):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_18.py [-h | --help]')
         sys.exit(2)

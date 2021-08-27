@@ -7,11 +7,10 @@ from challenge_08 import split_by_length
 from challenge_11 import ecb_encryptor
 from challenge_12 import detect_mode_of_operation, detect_block_length
 
-
 KEY = secrets.token_bytes(16)
 
-def prefix_ecb_encryption_oracle(plaintext):
 
+def prefix_ecb_encryption_oracle(plaintext):
     prefix_length = secrets.choice(range(5, 11))
     prefix = secrets.token_bytes(prefix_length)
     plaintext = prefix + plaintext
@@ -21,9 +20,8 @@ def prefix_ecb_encryption_oracle(plaintext):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_14.py [-h | --help]')
         sys.exit(2)
@@ -36,9 +34,9 @@ def main(argv):
 
     # noinspection SpellCheckingInspection
     target = ("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"
-            "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
-            "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
-            "YnkK")
+              "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
+              "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
+              "YnkK")
     target_bytes = base64.b64decode(target.encode())
 
     # Detecting length of block and mode of operation

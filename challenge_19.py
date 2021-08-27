@@ -7,12 +7,13 @@ from challenge_02 import bytestrxor
 from challenge_03 import evaluate_plaintext
 from challenge_18 import ctr_cryptor
 
-
 AES_KEY = secrets.token_bytes(16)
+
 
 def fixed_nonce_ctr_cryptor(text):
     nonce = bytes([0] * 8)
     return ctr_cryptor(text, AES_KEY, nonce)
+
 
 def get_key_byte_candidates(ciphertexts):
     # Consider bytes at same position in different ciphertext as result of single-char XOR
@@ -35,6 +36,7 @@ def get_key_byte_candidates(ciphertexts):
                 key_candidate += trial_byte
         key_byte_candidates.append(key_candidate)
     return key_byte_candidates
+
 
 def fix_key(key, ciphertexts, key_byte_candidates):
     while True:
@@ -60,9 +62,8 @@ def fix_key(key, ciphertexts, key_byte_candidates):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_19.py [-h | --help]')
         sys.exit(2)

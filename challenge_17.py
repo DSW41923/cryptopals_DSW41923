@@ -8,7 +8,6 @@ from challenge_08 import split_by_length
 from challenge_10 import cbc_encryptor, cbc_decryptor
 from challenge_15 import verify_padding
 
-
 CBC_KEY = secrets.token_bytes(16)
 
 
@@ -16,6 +15,7 @@ def encrypt_in_cbc(plaintext):
     iv = secrets.token_bytes(16)
     ciphertext = cbc_encryptor(CBC_KEY, plaintext, iv)
     return ciphertext
+
 
 def decrypt_and_verify_padding(ciphertext):
     plaintext = cbc_decryptor(CBC_KEY, ciphertext)
@@ -27,9 +27,8 @@ def decrypt_and_verify_padding(ciphertext):
 
 # noinspection SpellCheckingInspection
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_17.py [-h | --help]')
         sys.exit(2)

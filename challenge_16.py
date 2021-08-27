@@ -5,8 +5,8 @@ import secrets
 from challenge_02 import bytestrxor
 from challenge_10 import cbc_encryptor, cbc_decryptor
 
-
 CBC_KEY = secrets.token_bytes(16)
+
 
 def encrypt_data_cbc(text):
     quoted_text = text.replace(";", "\\;").replace("=", "\\=")
@@ -14,6 +14,7 @@ def encrypt_data_cbc(text):
     iv = secrets.token_bytes(16)
     ciphertext = cbc_encryptor(CBC_KEY, plaintext.encode(), iv)
     return ciphertext
+
 
 def decrypt_and_detect(ciphertext, text):
     plaintext = cbc_decryptor(CBC_KEY, ciphertext)
@@ -23,9 +24,8 @@ def decrypt_and_detect(ciphertext, text):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_16.py [-h | --help]')
         sys.exit(2)

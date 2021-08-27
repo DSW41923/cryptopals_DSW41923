@@ -5,14 +5,12 @@ import binascii
 
 
 def split_by_length(text, length):
-
     return [text[i:i + length] for i in range(0, len(text), length)]
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_08.py [-h | --help]')
         sys.exit(2)
@@ -37,7 +35,7 @@ def main(argv):
                 for block in ciphertext_block:
                     if (ciphertext_block.count(block) > 1) and (line_num not in ecb_lines):
                         ecb_lines.append(line_num)
-                        
+
         for line_num in ecb_lines:
             print(str(line_num) + " is AES in ECB mode!!")
     except FileNotFoundError as e:

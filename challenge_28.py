@@ -7,15 +7,16 @@ from cryptography.hazmat.backends import default_backend
 
 from challenge_08 import split_by_length
 
-
 A = 0x67452301
 B = 0xEFCDAB89
 C = 0x98BADCFE
 D = 0x10325476
 E = 0xC3D2E1F0
 
+
 def left_rotate(num, rotate_length):
     return ((num << rotate_length) | (num >> (32 - rotate_length))) & 0xFFFFFFFF
+
 
 class SHA1PrefixMAC(object):
     """
@@ -76,7 +77,7 @@ class SHA1PrefixMAC(object):
                     f = (((c ^ d) & b) ^ d)
                     k = 0x5A827999
                 elif j in range(40, 60):
-                    f = (b & c) | (b & d) | (c & d) 
+                    f = (b & c) | (b & d) | (c & d)
                     k = 0x8F1BBCDC
                 else:
                     f = b ^ c ^ d
@@ -93,7 +94,7 @@ class SHA1PrefixMAC(object):
                 a = temp
 
             self.h0 = (self.h0 + a) & 0xFFFFFFFF
-            self.h1 = (self.h1 + b) & 0xFFFFFFFF 
+            self.h1 = (self.h1 + b) & 0xFFFFFFFF
             self.h2 = (self.h2 + c) & 0xFFFFFFFF
             self.h3 = (self.h3 + d) & 0xFFFFFFFF
             self.h4 = (self.h4 + e) & 0xFFFFFFFF
@@ -115,8 +116,8 @@ class SHA1PrefixMAC(object):
 
         return self.mac_text(text) == hash_value
 
-def prefix_sha1_mac(key, text):
 
+def prefix_sha1_mac(key, text):
     if type(text) != bytes:
         text = text.encode()
 
@@ -128,9 +129,8 @@ def prefix_sha1_mac(key, text):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_28.py [-h | --help]')
         sys.exit(2)
@@ -150,7 +150,6 @@ def main(argv):
     testing_mac = mac_generator.mac_text(text)
     print("Implementation successful? " + str(bool(testing_mac == correct_mac)))
 
-    
     new_text = text[:-10] + b" SUB MARINE"
     print("Original text is " + text.decode())
     print("New text is " + new_text.decode())
@@ -163,6 +162,7 @@ def main(argv):
         if (trial_mac == testing_mac) and (trial_key != key):
             print(b"Found second key for this input and MAC! " + trial_key)
     print("Couldn't find second key for this input and MAC!")
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

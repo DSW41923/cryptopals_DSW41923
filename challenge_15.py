@@ -5,15 +5,15 @@ import getopt
 def verify_padding(text, length):
     if type(text) != bytes:
         text = text.encode()
-    
+
     if len(text) == length:
         padding_byte = text[-1]
         padding_byte_count = 1
         for x in range(2, padding_byte + 1):
-                if text[-x] == padding_byte:
-                    padding_byte_count += 1
-                else:
-                    break
+            if text[-x] == padding_byte:
+                padding_byte_count += 1
+            else:
+                break
         if padding_byte_count == padding_byte:
             return text[:-padding_byte_count]
 
@@ -21,9 +21,8 @@ def verify_padding(text, length):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_15.py [-h | --help]')
         sys.exit(2)

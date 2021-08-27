@@ -8,9 +8,8 @@ from cryptography.hazmat.backends import default_backend
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_07.py [-h | --help]')
         sys.exit(2)

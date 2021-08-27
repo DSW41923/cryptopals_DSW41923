@@ -1,16 +1,14 @@
 import sys
 import codecs
 import getopt
-import binascii
 
 from challenge_02 import bytestrxor
 from challenge_03 import evaluate_plaintext
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_04.py [-h | --help]')
         sys.exit(2)
@@ -31,8 +29,8 @@ def main(argv):
         per_line_analysis = []
         for ct in ciphertexts:
             try:
-                origin_ciphertext = codecs.decode(ct, 'hex')
-            except binascii.Error as e:
+                origin_ciphertext = bytes.fromhex(ct)
+            except ValueError as e:
                 print(ct)
                 print("Decoding Error: " + str(e))
                 sys.exit(2)

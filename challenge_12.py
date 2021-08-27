@@ -6,13 +6,14 @@ import secrets
 from challenge_08 import split_by_length
 from challenge_11 import ecb_encryptor
 
-
 KEY = secrets.token_bytes(16)
+
 
 def ecb_encryption_oracle(plaintext):
     # Remove random prefix and affix based on challenge 14
     ciphertext = ecb_encryptor(plaintext, KEY)
     return ciphertext
+
 
 def detect_mode_of_operation(ciphertext):
     ciphertext_block = split_by_length(ciphertext, 16)
@@ -20,6 +21,7 @@ def detect_mode_of_operation(ciphertext):
         if ciphertext_block.count(block) > 1:
             return "ECB"
     return "Unknown"
+
 
 def detect_block_length(oracle):
     previous_ct_length = 0
@@ -36,9 +38,8 @@ def detect_block_length(oracle):
 
 # noinspection SpellCheckingInspection
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_12.py [-h | --help]')
         sys.exit(2)
@@ -50,9 +51,9 @@ def main(argv):
             sys.exit()
 
     target = ("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"
-            "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
-            "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
-            "YnkK")
+              "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
+              "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
+              "YnkK")
     target_bytes = base64.b64decode(target.encode())
 
     # Detecting length of block and mode of operation

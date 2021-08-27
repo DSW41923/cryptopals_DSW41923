@@ -27,9 +27,8 @@ def hamming_distance(string_1, string_2):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_06.py [-h | --help]')
         sys.exit(2)
@@ -89,7 +88,7 @@ def main(argv):
 
                     for k in range(j, len(ciphertext), key_length):
                         partial_ciphertext_bytes.append(ciphertext[k])
-                    
+
                     partial_ciphertext = bytes(partial_ciphertext_bytes)
 
                     best_scoring = 0

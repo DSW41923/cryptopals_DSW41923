@@ -4,12 +4,14 @@ import math
 from typing import Iterable, Tuple
 from challenge_39 import invmod, generate_big_primes, simple_rsa_encrypt
 
-def crt_solver(residues: Iterable[Tuple[int, int]])->int:
+
+def crt_solver(residues: Iterable[Tuple[int, int]]) -> int:
     n_all = math.prod([r[1] for r in residues])
     result = 0
     for r, n in residues:
         result += r * (n_all // n) * invmod(n_all // n, n)
     return result % n_all
+
 
 def cubic_root_bignum(x):
     """
@@ -21,9 +23,9 @@ def cubic_root_bignum(x):
     low = high // 2
     while low < high:
         mid = (low + high) // 2
-        if low < mid and mid**3 < x:
+        if low < mid and mid ** 3 < x:
             low = mid
-        elif high > mid and mid**3 > x:
+        elif high > mid and mid ** 3 > x:
             high = mid
         else:
             return mid
@@ -52,6 +54,7 @@ def main():
         print("Attack success!")
     else:
         print("Something went wrong!")
+
 
 if __name__ == "__main__":
     main()

@@ -6,8 +6,8 @@ from challenge_02 import bytestrxor
 from challenge_08 import split_by_length
 from challenge_10 import cbc_encryptor, cbc_decryptor
 
-
 CBC_KEY = secrets.token_bytes(16)
+
 
 def encrypt_checked_data_cbc(plaintext):
     if type(plaintext) != bytes:
@@ -19,6 +19,7 @@ def encrypt_checked_data_cbc(plaintext):
 
     return cbc_encryptor(CBC_KEY, plaintext, CBC_KEY)
 
+
 def decrypt_and_check(ciphertext):
     plaintext = cbc_decryptor(CBC_KEY, ciphertext)
     for byte in plaintext:
@@ -28,9 +29,8 @@ def decrypt_and_check(ciphertext):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_27.py [-h | --help]')
         sys.exit(2)

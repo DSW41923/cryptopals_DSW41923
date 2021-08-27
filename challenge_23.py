@@ -27,10 +27,10 @@ def recover_rng_state(source):
             a = 7 * i
             b = 7 * (i + 1)
             c = 2 ** 7
-            l = (x_1 >> a) % c
+            ll = (x_1 >> a) % c
             m = (magic_num >> b) % c
             n = (x_2 >> b) % c
-            x_1 += ((l & m) ^ n) << b
+            x_1 += ((ll & m) ^ n) << b
         x_1 += ((((x_1 >> 21) % 16) & ((magic_num >> 28) % 16)) ^ (x_2 >> 28) % 16) << 28
 
         # Inverse first computation
@@ -45,9 +45,8 @@ def recover_rng_state(source):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_23.py [-h | --help]')
         sys.exit(2)

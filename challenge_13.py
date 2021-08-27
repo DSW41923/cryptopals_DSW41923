@@ -23,6 +23,7 @@ def parse_pseudo_cookie_text(text):
     }
     return parsed
 
+
 def new_profile(email):
     email_domain = email.split('@')[-1]
     if ('&' in email_domain) or ('=' in email_domain):
@@ -36,11 +37,13 @@ def new_profile(email):
     }
     return encode_profile(profile)
 
+
 def encode_profile(profile):
     email = profile['email']
     uid = profile['uid']
     role = profile['role']
     return 'email={}&uid={}&role={}'.format(email, str(uid), role)
+
 
 def encrypt_profile(key, plaintext):
     plaintext = pad_plaintext(plaintext, 16)
@@ -50,12 +53,14 @@ def encrypt_profile(key, plaintext):
     ciphertext = encryptor.update(plaintext) + encryptor.finalize()
     return ciphertext
 
+
 def decrypt_to_profile(key, ciphertext):
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
     decryptor = cipher.decryptor()
     plaintext = decryptor.update(ciphertext) + decryptor.finalize()
     return parse_pseudo_cookie_text(plaintext.decode())
+
 
 def pad_plaintext(plaintext, block_length):
     plaintext_blocks = split_by_length(plaintext, block_length)
@@ -65,9 +70,8 @@ def pad_plaintext(plaintext, block_length):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_13.py [-h | --help]')
         sys.exit(2)

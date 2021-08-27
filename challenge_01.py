@@ -1,14 +1,12 @@
 import sys
 import codecs
 import getopt
-import binascii
 
 
 # noinspection SpellCheckingInspection
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_01.py [-h | --help]')
         sys.exit(2)
@@ -22,8 +20,8 @@ def main(argv):
     origin_text = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
     expected_text = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
     try:
-        convert_result = codecs.encode(codecs.decode(origin_text, 'hex'), encoding='base64').decode().replace("\n", "")
-    except binascii.Error as e:
+        convert_result = codecs.encode(bytes.fromhex(origin_text), encoding='base64').decode().replace("\n", "")
+    except ValueError as e:
         print("Decoding Error: " + str(e))
         sys.exit(2)
     else:

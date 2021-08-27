@@ -6,11 +6,11 @@ from challenge_08 import split_by_length
 from challenge_28 import left_rotate
 from challenge_29 import get_desired_extended_text
 
-
 A = 0x67452301
 B = 0xEFCDAB89
 C = 0x98BADCFE
 D = 0x10325476
+
 
 class MD4PrefixMAC(object):
     """
@@ -55,36 +55,37 @@ class MD4PrefixMAC(object):
 
         bin_string_chunks = split_by_length(bin_string, 512)
         for chunk in bin_string_chunks:
-            words = list(map(lambda x: int.from_bytes(int(x, 2).to_bytes(4, 'big'), 'little'), split_by_length(chunk, 32)))
+            words = list(
+                map(lambda x: int.from_bytes(int(x, 2).to_bytes(4, 'big'), 'little'), split_by_length(chunk, 32)))
             h = [self.h0, self.h1, self.h2, self.h3]
 
             for n in range(48):
-                i, j, k, l = map(lambda x: x % 4, range(-n, -n + 4))
+                i, j, k, ll = map(lambda x: x % 4, range(-n, -n + 4))
 
                 if n in range(16):
-                    F = (h[j] & h[k]) | ((~h[j]) & h[l])
+                    F = (h[j] & h[k]) | ((~h[j]) & h[ll])
                     L = 0x00000000
                     X = [3, 7, 11, 19]
                     Ki = range(16)
                 elif n in range(16, 32):
-                    F = (h[j] & h[k]) | (h[j] & h[l]) | (h[k] & h[l]) 
+                    F = (h[j] & h[k]) | (h[j] & h[ll]) | (h[k] & h[ll])
                     L = 0x5A827999
                     X = [3, 5, 9, 13]
                     Ki = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
                 else:
                     # n in range(32, 48)
-                    F = h[j] ^ h[k] ^ h[l]
+                    F = h[j] ^ h[k] ^ h[ll]
                     L = 0x6ED9EBA1
                     X = [3, 9, 11, 15]
                     Ki = [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15]
-                
+
                 K = Ki[n % 16]
                 S = X[n % 4]
                 hn = (h[i] + F + words[K] + L) & 0xFFFFFFFF
                 h[i] = left_rotate(hn, S)
 
             self.h0 = (self.h0 + h[0]) & 0xFFFFFFFF
-            self.h1 = (self.h1 + h[1]) & 0xFFFFFFFF 
+            self.h1 = (self.h1 + h[1]) & 0xFFFFFFFF
             self.h2 = (self.h2 + h[2]) & 0xFFFFFFFF
             self.h3 = (self.h3 + h[3]) & 0xFFFFFFFF
 
@@ -108,9 +109,8 @@ class MD4PrefixMAC(object):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_30.py [-h | --help]')
         sys.exit(2)
@@ -124,17 +124,17 @@ def main(argv):
     # Verify MD4 Implementation
     # noinspection SpellCheckingInspection
     testing_text = [b"", b"a", b"abc", b"message digest",
-        b"abcdefghijklmnopqrstuvwxyz",
-        b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-        b"12345678901234567890123456789012345678901234567890123456789012345678901234567890"]
+                    b"abcdefghijklmnopqrstuvwxyz",
+                    b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+                    b"12345678901234567890123456789012345678901234567890123456789012345678901234567890"]
     # noinspection SpellCheckingInspection
     verifying_hash = ["31d6cfe0d16ae931b73c59d7e0c089c0",
-        "bde52cb31de33e46245e05fbdbd6fb24",
-        "a448017aaf21d8525fc10ae87aa6729d",
-        "d9130a8164549fe818874806e1c7014b",
-        "d79e1c308aa5bbcdeea8ed63df412da9",
-        "043f8582f241db351ce627e153e7f0e4",
-        "e33b4ddc9c38f2199c3e7b164fcc0536"]
+                      "bde52cb31de33e46245e05fbdbd6fb24",
+                      "a448017aaf21d8525fc10ae87aa6729d",
+                      "d9130a8164549fe818874806e1c7014b",
+                      "d79e1c308aa5bbcdeea8ed63df412da9",
+                      "043f8582f241db351ce627e153e7f0e4",
+                      "e33b4ddc9c38f2199c3e7b164fcc0536"]
     verifying_mac = MD4PrefixMAC(b'')
     for text, hash_value in zip(testing_text, verifying_hash):
         if not verifying_mac.verify(text, bytes.fromhex(hash_value)):
@@ -152,6 +152,7 @@ def main(argv):
     split_original_mac_hex = split_by_length(original_mac.hex(), 8)
     new_states = tuple(map(lambda x: int.from_bytes(int(x, 16).to_bytes(4, 'big'), 'little'), split_original_mac_hex))
     get_desired_extended_text(text, mac_generator, new_states, target)
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

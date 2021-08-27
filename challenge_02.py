@@ -1,7 +1,6 @@
 import sys
 import codecs
 import getopt
-import binascii
 
 
 def bytestrxor(a, b):
@@ -9,9 +8,8 @@ def bytestrxor(a, b):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_02.py [-h | --help]')
         sys.exit(2)
@@ -23,18 +21,18 @@ def main(argv):
             sys.exit()
 
     try:
-        origin_text_1 = codecs.decode("1c0111001f010100061a024b53535009181c", 'hex')
-        origin_text_2 = codecs.decode("686974207468652062756c6c277320657965", 'hex')
+        origin_text_1 = bytes.fromhex("1c0111001f010100061a024b53535009181c")
+        origin_text_2 = bytes.fromhex("686974207468652062756c6c277320657965")
         expected_text = "746865206b696420646f6e277420706c6179"
-    except binascii.Error as e:
+    except ValueError as e:
         print("Decoding Error: " + str(e))
         sys.exit(2)
     else:
-        
+
         if len(origin_text_1) != len(origin_text_2):
             print('Both inputs must have same length.')
             sys.exit(2)
-        
+
         xor_result_str = bytestrxor(origin_text_1, origin_text_2)
         xor_result = codecs.encode(xor_result_str, encoding='hex').decode()
         print("Xored result is: " + xor_result)

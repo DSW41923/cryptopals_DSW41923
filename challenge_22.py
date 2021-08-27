@@ -7,9 +7,8 @@ from challenge_21 import MT19937RNG
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_22.py [-h | --help]')
         sys.exit(2)

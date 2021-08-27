@@ -6,7 +6,6 @@ import time
 
 
 def insecure_compare(delay, file_signature, hmac):
-
     for b1, b2 in zip(file_signature, hmac):
         if b1 != b2:
             return False
@@ -15,8 +14,8 @@ def insecure_compare(delay, file_signature, hmac):
 
     return True
 
-def get_correct_signature(url, file_name, timing_difference):
 
+def get_correct_signature(url, file_name, timing_difference):
     signature_candidates = [b'']
     min_response_time = 0
 
@@ -44,8 +43,8 @@ def get_correct_signature(url, file_name, timing_difference):
         if response.status_code == 200:
             return s
 
-def get_byte_candidates(url, file_name, signature, ideal_response_time, min_response_time):
 
+def get_byte_candidates(url, file_name, signature, ideal_response_time, min_response_time):
     byte_candidates = []
     byte_trial_results = []
     for x in range(256):
@@ -53,7 +52,7 @@ def get_byte_candidates(url, file_name, signature, ideal_response_time, min_resp
         trial_payload = {'file': file_name, 'signature': trial_signature.hex()}
         trial_result = try_byte_candidate(url, trial_payload, ideal_response_time, len(signature))
         if trial_result == 1:
-            return[x], 1
+            return [x], 1
         elif trial_result < min_response_time:
             return [], 0
         elif trial_result >= ideal_response_time and len(signature) < 19:
@@ -68,8 +67,8 @@ def get_byte_candidates(url, file_name, signature, ideal_response_time, min_resp
 
     return byte_candidates, min(byte_trial_results) if byte_trial_results else 0
 
-def try_byte_candidate(url, payload, ideal_response_time, correct_signature_length):
 
+def try_byte_candidate(url, payload, ideal_response_time, correct_signature_length):
     response_time_record = []
     for z in range(10):
         try:
@@ -89,9 +88,8 @@ def try_byte_candidate(url, payload, ideal_response_time, correct_signature_leng
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_31.py [-h | --help]')
         sys.exit(2)

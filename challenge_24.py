@@ -8,7 +8,6 @@ from challenge_21 import MT19937RNG
 
 
 def mt19937_rng_cryptor(text, seed):
-
     rng = MT19937RNG(seed)
     key_string = rng.extract_number()
 
@@ -19,6 +18,7 @@ def mt19937_rng_cryptor(text, seed):
 
     return bytestrxor(text, key_byte[:len(text)])
 
+
 def random_prefix_text(text):
     prefix_byte_length = secrets.choice(range(64))
     text = secrets.token_bytes(prefix_byte_length) + text
@@ -26,9 +26,8 @@ def random_prefix_text(text):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_24.py [-h | --help]')
         sys.exit(2)

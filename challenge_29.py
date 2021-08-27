@@ -27,9 +27,8 @@ def get_desired_extended_text(text, mac_generator, states, target):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_29.py [-h | --help]')
         sys.exit(2)

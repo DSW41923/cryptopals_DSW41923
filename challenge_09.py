@@ -13,9 +13,8 @@ def padding_to_length(text, length):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_09.py [-h | --help]')
         sys.exit(2)

@@ -32,6 +32,7 @@ def cbc_encryptor(key, plaintext, iv):
         ciphertext_result.append(ciphertext)
     return iv + b''.join(ciphertext_result)
 
+
 def cbc_decryptor(key, ciphertext):
     # Prepare decryptor
     backend = default_backend()
@@ -42,7 +43,6 @@ def cbc_decryptor(key, ciphertext):
     plaintext_result = []
     ciphertext_blocks = split_by_length(ciphertext, 16)
     for block_num, block in enumerate(ciphertext_blocks[1:]):
-
         plaintext_block = decryptor.update(block)
         pt_block = bytestrxor(plaintext_block, ciphertext_blocks[block_num])
         plaintext_result.append(pt_block)
@@ -51,9 +51,8 @@ def cbc_decryptor(key, ciphertext):
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_10.py [-h | --help]')
         sys.exit(2)
