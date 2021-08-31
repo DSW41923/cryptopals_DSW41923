@@ -28,6 +28,7 @@ def server_decrypt(c):
 def main():
     parser = argparse.ArgumentParser()
     parser.parse_args()
+    print("Challenge 41: Implement unpadded message recovery oracle")
 
     target_pool = []
     for pwd in PASSWORD_DICTIONARY:
