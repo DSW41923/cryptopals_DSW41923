@@ -19,8 +19,9 @@ def print_len(m: bytes) -> int:
     return length
 
 
-def int_to_bytes(n: int) -> bytes:
-    return n.to_bytes((n.bit_length() + 7) // 8, 'big')
+def int_to_bytes(n: int, length: int = None, byteorder: str = 'big') -> bytes:
+    length = length if length else (n.bit_length() + 7) // 8
+    return n.to_bytes(length, byteorder)
 
 
 def main():

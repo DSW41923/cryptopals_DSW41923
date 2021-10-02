@@ -36,7 +36,6 @@ def simple_padding(formatted_message: bytes, block_length: int, padding="PKCS1.5
         # encoded_payload = ASN.1 format prepended hash_function_name.encode() + hashed_message
         padding_length = block_length - 3 - len(formatted_message)
         padded_payload = bytes.fromhex("0001") + bytes([255] * padding_length) + bytes.fromhex("00") + formatted_message
-        print(padded_payload.hex())
         return padded_payload
     else:
         raise NotImplementedError

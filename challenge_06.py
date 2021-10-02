@@ -92,7 +92,7 @@ def main(argv):
                     partial_ciphertext = bytes(partial_ciphertext_bytes)
 
                     best_scoring = 0
-                    best_evaluation = ('', '')
+                    best_evaluation = (b'', b'')
                     for x in range(1, 256):
                         possible_key_byte = x.to_bytes(1, 'big')
                         possible_key = possible_key_byte * len(partial_ciphertext)
@@ -101,7 +101,7 @@ def main(argv):
                         if current_scoring > best_scoring:
                             best_scoring = current_scoring
                             best_evaluation = (possible_key_byte, possible_plaintext)
-                    if best_evaluation[0] != '':
+                    if best_evaluation[0] is not b'':
                         best_evaluations.append(best_evaluation)
 
                 if len(best_evaluations) == key_length:

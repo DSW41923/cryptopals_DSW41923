@@ -6,9 +6,8 @@ from challenge_31 import get_correct_signature
 
 
 def main(argv):
-
     try:
-        opts, args = getopt.getopt(argv,"h:",["help"])
+        opts, args = getopt.getopt(argv, "h:", ["help"])
     except getopt.GetoptError:
         print('Usage: python3 challenge_32.py [-h | --help]')
         sys.exit(2)

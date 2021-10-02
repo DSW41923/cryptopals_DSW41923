@@ -10,11 +10,13 @@ from urllib.parse import urlparse, parse_qs
 from challenge_02 import bytestrxor
 from challenge_31 import insecure_compare
 
-
 KEY = secrets.token_bytes(16)
 
+
+# noinspection PyPep8Naming
 class HMAC(object):
     """General HMAC for any hash function"""
+
     def __init__(self, blockSize, mac_func):
         super(HMAC, self).__init__()
         self.blockSize = blockSize
@@ -41,6 +43,7 @@ class HMAC(object):
         digest.update(text)
         return digest.finalize()
 
+
 class CryptopalRequestHandler(http.server.BaseHTTPRequestHandler):
     # noinspection PyPep8Naming
     def do_GET(self):
@@ -48,7 +51,7 @@ class CryptopalRequestHandler(http.server.BaseHTTPRequestHandler):
         request_path = parsed_request_url.path.split('/')
         assert request_path[1] == 'challenges'
 
-        if request_path[-1] in ['31', '32'] :
+        if request_path[-1] in ['31', '32']:
 
             if request_path[-1] == '31':
                 delay = 0.050
@@ -79,7 +82,6 @@ class CryptopalRequestHandler(http.server.BaseHTTPRequestHandler):
 
 
 def run_server(argv):
-
     if argv[1:]:
         port = int(argv[1])
     else:
@@ -88,6 +90,7 @@ def run_server(argv):
     httpd = socketserver.TCPServer(("", port), CryptopalRequestHandler)
     print("serving at port", port)
     httpd.serve_forever()
+
 
 if __name__ == "__main__":
     run_server(sys.argv[1:])

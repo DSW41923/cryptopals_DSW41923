@@ -16,6 +16,7 @@ def encrypt_data_ctr(text):
     return ciphertext
 
 
+# noinspection PyUnresolvedReferences
 def decrypt_and_detect(ciphertext, text=b";admin=true;"):
     plaintext = ctr_cryptor(ciphertext, CTR_KEY, NONCE)
     if type(text) != bytes:
