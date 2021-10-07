@@ -2,6 +2,7 @@ import sys
 import socketserver
 import http.server
 import secrets
+import re
 
 from cryptography.hazmat.primitives.hashes import Hash, SHA1
 from cryptography.hazmat.backends import default_backend
@@ -9,6 +10,7 @@ from urllib.parse import urlparse, parse_qs
 
 from challenge_02 import bytestrxor
 from challenge_31 import insecure_compare
+from challenge_49 import cbc_mac
 
 KEY = secrets.token_bytes(16)
 
@@ -60,9 +62,9 @@ class CryptopalRequestHandler(http.server.BaseHTTPRequestHandler):
             else:
                 delay = 1
 
-            request_query = parse_qs(parsed_request_url.query)
-            file = request_query.get('file')[0]
-            signature = request_query.get('signature')[0]
+            request_query_bytes = parse_qs(parsed_request_url.query)
+            file = request_query_bytes.get('file')[0]
+            signature = request_query_bytes.get('signature')[0]
             signature = bytes.fromhex(signature)
 
             hmac_generator = HMAC(blockSize=512, mac_func=SHA1)
@@ -79,6 +81,51 @@ class CryptopalRequestHandler(http.server.BaseHTTPRequestHandler):
             else:
                 self.send_error(500)
                 return
+
+        elif request_path[-1] == '49':
+            request_query = parse_qs(parsed_request_url.query)
+            version = request_query.get('version')[0]
+            request_message_bytes = bytes.fromhex(request_query.get('message')[0])
+            if version == '1':
+                message, iv = request_message_bytes[:-32], request_message_bytes[-32:-16]
+            elif version == '2':
+                message = request_message_bytes[:-16]
+                iv = (0).to_bytes(16, 'big')
+            else:
+                self.send_error(501)
+                return
+
+            if cbc_mac(KEY, message, iv) == request_message_bytes[-16:]:
+                if version == '1':
+                    for from_id, to_id, amount in re.findall(r'from=#(\w+)&to=#(\w+)&amount=#([\w ]+)', message.decode()):
+                        print("Doing transaction: Trasfering {} from account {} to account {}."
+                              .format(amount, from_id, to_id))
+                elif version == '2':
+                    from_id = re.search(rb'from=#(\w+)&', message).group(1).decode()
+                    tx_list = re.search(rb'tx_list=#(.+)', message).group(1)
+                    for to_id, amount in re.findall(rb'(\w+):([\w ]+)', tx_list):
+                        print("Doing transaction: Trasfering {} from account {} to account {}."
+                              .format(amount.decode(), from_id, to_id.decode()))
+                else:
+                    self.send_error(501)
+                    return
+
+                self.send_response(200)
+                self.end_headers()
+                return
+            else:
+                self.send_error(500)
+                return
+
+        elif request_path[-1] == 'get_key':
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(KEY)
+            return
+
+        else:
+            self.send_error(501)
+            return
 
 
 def run_server(argv):
