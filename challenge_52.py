@@ -15,21 +15,22 @@ def simple_hash(key: bytes, msg: bytes, result_len: int):
     # Prepare encryptor
     backend = default_backend()
 
-    plaintext_blocks = split_by_length(key, 16)
-    for block_num, block in enumerate(plaintext_blocks):
-        if len(block) < 16:
-            block = padding_to_length(block, 16)
+    key_blocks = split_by_length(key, 16)
+    for key_block in key_blocks:
+        if len(key_block) < 16:
+            key_block = padding_to_length(key_block, 16)
 
-        cipher = Cipher(algorithms.AES(block), modes.ECB(), backend=backend)
+        msg = padding_to_length(msg, 16)
+
+        cipher = Cipher(algorithms.AES(key_block), modes.ECB(), backend=backend)
         encryptor = cipher.encryptor()
-        msg = encryptor.update(msg)
-    return msg[:result_len]
+        msg = encryptor.update(msg)[:result_len]
+    return msg
 
 
 def bad_merkle_damgard(msg: bytes, init_state: bytes, result_len: int = None):
     result_len = len(init_state) if not result_len else result_len
-    h = padding_to_length(init_state, 16)
-    return simple_hash(msg, h, result_len)
+    return simple_hash(msg, init_state, result_len)
 
 
 def get_collisions(block_length: int, init_state: bytes):
